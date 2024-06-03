@@ -123,10 +123,14 @@ app_license = "MIT"
 # 		"on_trash": "method"
 # 	}
 # }
-
+doc_events = {
+    "Role Profile" : {
+        "validate": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.add_role_profile_in_keycloak",
+        "on_trash": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.delete_role_profile_in_keycloak" 
+    }
+}
 # Scheduled Tasks
 # ---------------
-
 # scheduler_events = {
 # 	"all": [
 # 		"keycloak.tasks.all"
@@ -154,7 +158,8 @@ app_license = "MIT"
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
+# 	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
+#     "frappe.core.doctype.user.user.sign_up": "keycloak.keycloak_integration.customizations.User.add_user_via_signup.sign_up"
 # }
 #
 # each overriding function accepts a `data` argument;
