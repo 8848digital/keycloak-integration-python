@@ -5,6 +5,7 @@ import keycloak.api.v1.map_users as map_users
 import keycloak.api.v1.map_roles as map_roles
 import keycloak.api.v1.keycloak_erp_group_map as keycloak_erp_group_map
 import keycloak.api.v1.map_groups as map_groups
+import keycloak.api.v1.assign_role_profile as assign_role_profile
 
 class V1():
     def __init__(self):
@@ -14,7 +15,8 @@ class V1():
             'map_roles':['map_roles_in_frappe'],
             'unassign_roles':['unassign_role_of_a_user'],
             'keycloak_erp_group_map':['map_groups_in_frappe'],
-            'map_groups':['map_user_type_in_frappe']
+            'map_groups':['map_user_type_in_frappe'],
+            'assign_role_profile': ["assign_role_profile_in_frappe"]
             }
     def class_map(self, kwargs):
         # print("entity")

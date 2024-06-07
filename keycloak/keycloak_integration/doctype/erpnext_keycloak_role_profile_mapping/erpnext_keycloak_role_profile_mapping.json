@@ -1,42 +1,35 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:group_name",
- "creation": "2024-05-29 13:34:02.146483",
+ "autoname": "field:role_profile_name",
+ "creation": "2024-06-07 13:22:45.886168",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "group_id",
-  "group_name",
-  "module_profile_details"
+  "role_profile_name",
+  "role_profile_id"
  ],
  "fields": [
   {
-   "fieldname": "group_id",
+   "fieldname": "role_profile_name",
    "fieldtype": "Data",
-   "label": "Group Id"
-  },
-  {
-   "fieldname": "group_name",
-   "fieldtype": "Data",
-   "label": "Group Name",
+   "label": "Role Profile Name",
    "unique": 1
   },
   {
-   "fieldname": "module_profile_details",
-   "fieldtype": "Table",
-   "label": "Module Profile Details",
-   "options": "Module Profile Name"
+   "fieldname": "role_profile_id",
+   "fieldtype": "Data",
+   "label": "Role Profile Id"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-06 13:26:54.347445",
+ "modified": "2024-06-07 13:22:55.633390",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
- "name": "Keycloak Erpnext Group Mapping",
+ "name": "Erpnext Keycloak Role Profile Mapping",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
