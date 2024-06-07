@@ -9,7 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "group_id",
-  "group_name"
+  "group_name",
+  "module_profile_details"
  ],
  "fields": [
   {
@@ -22,11 +23,17 @@
    "fieldtype": "Data",
    "label": "Group Name",
    "unique": 1
+  },
+  {
+   "fieldname": "module_profile_details",
+   "fieldtype": "Table",
+   "label": "Module Profile Details",
+   "options": "Module Profile Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-05-29 13:34:11.116418",
+ "modified": "2024-06-06 13:26:54.347445",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
  "name": "Keycloak Erpnext Group Mapping",
