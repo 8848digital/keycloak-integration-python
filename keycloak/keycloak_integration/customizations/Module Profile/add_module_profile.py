@@ -69,7 +69,7 @@ def delete_module_profile_in_keycloak(doc,method):
             delete_url = f"{url}/{module_profile_id}"
             response = requests.delete(delete_url,headers=headers)
             if response.status_code == 204:
-                frappe.msgprint(_("Role deleted successfully."))
+                frappe.msgprint(_("Module Profile deleted successfully."))
             else:
                 frappe.throw(_(response.text))  
     except Exception as e:
