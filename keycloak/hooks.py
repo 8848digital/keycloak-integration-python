@@ -5,6 +5,11 @@ app_description = "Keycloak Integration"
 app_email = "amandeep@8848digital.com"
 app_license = "MIT"
 
+import keycloak.overrides.oauth
+import frappe.utils.oauth
+
+frappe.utils.oauth.get_info_via_oauth = keycloak.overrides.oauth.get_info_via_oauth
+
 # Includes in <head>
 # ------------------
 
@@ -123,6 +128,9 @@ app_license = "MIT"
 # 		"on_trash": "method"
 # 	}
 # }
+
+on_logout = "keycloak.overrides.logout.logout"
+
 doc_events = {
     "Role Profile" : {
         "validate": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.add_role_profile_in_keycloak",
@@ -222,3 +230,20 @@ doc_events = {
 # auth_hooks = [
 # 	"keycloak.auth.validate"
 # ]
+
+fixtures = [
+    {"dt": "Property Setter", "filters": [
+        [
+            "module", "in", [
+                "Keycloak Integration"
+            ]
+        ]
+    ]},
+    {"dt": "Custom Field", "filters": [
+        [
+            "module", "in", [
+                "Keycloak Integration"
+            ]
+        ]
+    ]}
+]
