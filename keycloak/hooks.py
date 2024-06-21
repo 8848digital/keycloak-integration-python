@@ -133,6 +133,7 @@ on_logout = "keycloak.overrides.logout.logout"
 
 doc_events = {
     "Role Profile" : {
+        "before_validate": "keycloak.keycloak_integration.customizations.Role Profile.update_role_profile.update_user_roles",
         "validate": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.add_role_profile_in_keycloak",
         "on_trash": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.delete_role_profile_in_keycloak" 
     },

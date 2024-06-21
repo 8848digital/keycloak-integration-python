@@ -3,8 +3,8 @@ from frappe import _
 import requests
 
 def add_role_profile_in_keycloak(doc, method):
-    token = get_access_token()
     if doc.is_new():
+        token = get_access_token()
         create_new_role_profile(doc, token)
 
 def get_access_token():
