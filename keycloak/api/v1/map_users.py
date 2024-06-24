@@ -54,6 +54,7 @@ def map_fieldnames_of_erp_and_keycloak():
         "userName": "username",
 		"userType": "role_profile_name",
         "email": "email",
+		"enableUser": "enabled"
     }
     return parameters_map
 
@@ -65,6 +66,8 @@ def set_data_in_erpnext_user_doctype(kwargs,doc):
 				doc.set(parameters_map[field],None)
 			elif field == "userType":
 				doc.set(parameters_map[field],"System Manager") if kwargs["userType"] == "System User" else doc.set(parameters_map[field],None)
+			elif field == "enableUser":
+				doc.set(parameters_map[field],1) if kwargs["enableUser"] == "Yes" else doc.set(parameters_map[field],0)
 			else:
 				doc.set(parameters_map[field],value)
 	doc.save(ignore_permissions=True)
