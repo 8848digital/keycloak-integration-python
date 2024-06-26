@@ -3,6 +3,7 @@ from frappe import _
 
 @frappe.whitelist()
 def assign_role_profile_in_frappe(kwargs):
+    print(kwargs)
     try:
         erp_username = frappe.db.get_value("Erpnext Keycloak User Mapping", {"keycloak_id": kwargs["user_id"]}, "erpnext_username") 
         if frappe.db.exists("Erpnext User",erp_username):
@@ -74,6 +75,14 @@ def remove_roles(kwargs, erp_username):
                         "role_profile": ("in", roles_to_unassign)
                     }
                 )
+
+                # Reassign idx values correctly
+                erp_user_doc = frappe.get_doc("Erpnext User",erp_username)
+                for idx, row in enumerate(erp_user_doc.role_profiles, start=1):
+                    row.idx = idx
+                    
+                erp_user_doc.save()
+
                 assign_collective_roles(erp_username)
             else:
                 print("No roles provided to unassign.")

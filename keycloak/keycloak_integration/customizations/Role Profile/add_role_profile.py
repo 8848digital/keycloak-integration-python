@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 import requests
+# from frappe.utils import get_site_path()
 
 def add_role_profile_in_keycloak(doc, method):
     if doc.is_new():
@@ -29,12 +30,19 @@ def get_access_token():
 
 def create_new_role_profile(doc,access_token):
     try:
+        print("***********************************************",frappe.request.host_url)
+        print("######################", frappe.utils.get_url())
         url,headers = get_url_and_headers(access_token)
         role_profile_name = {
             "name": doc.role_profile
         }
+
+        site_url = frappe.utils.get_url()
+        if site_url:
+            role_profile_name["attributes"] = {"Site":[f"{site_url}"]}
+        print(role_profile_name)
         response = requests.post(url, headers=headers, json=role_profile_name)
- 
+        
         if response.status_code == 201:
             frappe.msgprint(_("Role Profile added successfully."))
         else:

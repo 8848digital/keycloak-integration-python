@@ -6,6 +6,8 @@ def map_groups_in_frappe(kwargs):
 		create_group_mapping(kwargs)
 	elif kwargs["operation"] == "delete":
 		delete_group_mapping(kwargs)
+	elif kwargs["operation"] == "update":
+		update_group_mapping(kwargs)
 	
 def create_group_mapping(kwargs):
 	if kwargs.get("parent"):
@@ -51,3 +53,32 @@ def create_new_group_map(kwargs):
 		doc.save(ignore_permissions=True)
 	except Exception as e:
 		print("Issue",e)
+
+def update_group_mapping(kwargs):
+	print("KWARGS UPDATE :: ", kwargs)
+	try:
+		group_details_info = kwargs.get('group_details')
+		print(group_details_info)
+		doc = frappe.get_doc("Keycloak Erpnext Group Mapping",group_details_info["name"])
+		for field, value in group_details_info.items():
+			print(field)
+			if field == "attributes":
+				attributes_dict = group_details_info.get(field)
+				print(attributes_dict)
+				site_url = attributes_dict.get("Site")
+				print(site_url," :: SITE URL")
+				print(group_details_info[field],"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+				doc.set(parameter_map[field], site_url[0])
+			else:
+				if field in parameter_map.keys():
+					doc.set(parameter_map[field], value)
+		doc.save()
+	except Exception as e:
+		print("ISSUE : ", e)
+
+parameter_map = {
+	"id":"group_id",
+	"name": "group_name",
+	"attributes": "site_url"
+}
+	

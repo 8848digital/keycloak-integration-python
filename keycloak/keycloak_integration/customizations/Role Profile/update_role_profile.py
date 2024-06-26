@@ -2,9 +2,10 @@ import frappe
 from frappe import _
 
 def update_user_roles(doc, method): 
-    print("I")
-    lists = frappe.db.get_all("Role Profiles Table",filters={"role_profile":doc.role_profile},fields=["parent"])
-    frappe.enqueue(assign_roles_based_on_selected_role_profiles,lists=lists)
+    if not doc.is_new():
+        print("I")
+        lists = frappe.db.get_all("Role Profiles Table",filters={"role_profile":doc.role_profile},fields=["parent"])
+        frappe.enqueue(assign_roles_based_on_selected_role_profiles,lists=lists)
     
 
 
