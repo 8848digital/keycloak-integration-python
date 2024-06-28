@@ -10,6 +10,9 @@
  "field_order": [
   "group_id",
   "group_name",
+  "column_break_ine4w",
+  "site_url",
+  "section_break_7n3f6",
   "module_profile_details"
  ],
  "fields": [
@@ -29,11 +32,24 @@
    "fieldtype": "Table",
    "label": "Module Profile Details",
    "options": "Module Profile Name"
+  },
+  {
+   "fieldname": "column_break_ine4w",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "site_url",
+   "fieldtype": "Data",
+   "label": "Site Url"
+  },
+  {
+   "fieldname": "section_break_7n3f6",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-06 13:26:54.347445",
+ "modified": "2024-06-26 17:12:34.675599",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
  "name": "Keycloak Erpnext Group Mapping",
