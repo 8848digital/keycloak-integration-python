@@ -8,6 +8,7 @@ def assign_role_profile_in_frappe(kwargs):
         erp_username = frappe.db.get_value("Erpnext Keycloak User Mapping", {"keycloak_id": kwargs["user_id"]}, "erpnext_username") 
         if frappe.db.exists("Erpnext User",erp_username):
             doc = frappe.get_doc("Erpnext User",erp_username)
+            doc.role_profiles=[]
             if kwargs.get("operation") == "assign":
                 for row in kwargs.get("role_details"):
                     if frappe.db.exists("Role Profile", {"role_profile": row.get("name")}):
@@ -23,6 +24,7 @@ def assign_role_profile_in_frappe(kwargs):
         else:
             doc = frappe.new_doc("Erpnext User")
             doc.user = erp_username
+            doc.role_profiles=[]
             for row in kwargs.get("role_details"):
                 if frappe.db.exists("Role Profile", {"role_profile": row.get("name")}):
                     role_name = row.get("name")
