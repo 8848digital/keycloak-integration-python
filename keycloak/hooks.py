@@ -5,11 +5,6 @@ app_description = "Keycloak Integration"
 app_email = "amandeep@8848digital.com"
 app_license = "MIT"
 
-import keycloak.overrides.oauth
-import frappe.utils.oauth
-
-frappe.utils.oauth.get_info_via_oauth = keycloak.overrides.oauth.get_info_via_oauth
-
 # Includes in <head>
 # ------------------
 
@@ -169,10 +164,10 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
-#     "frappe.core.doctype.user.user.sign_up": "keycloak.keycloak_integration.customizations.User.add_user_via_signup.sign_up"
-# }
+override_whitelisted_methods = {
+	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
+    "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

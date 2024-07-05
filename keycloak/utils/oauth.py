@@ -1,7 +1,12 @@
 
 import frappe
 import json
-from frappe.utils.oauth import Callable, get_oauth2_flow, get_oauth2_providers, get_redirect_uri
+from frappe.utils.oauth import Callable, get_oauth2_flow, get_oauth2_providers, get_redirect_uri, login_oauth_user
+
+
+def login_via_oauth2(provider: str, code: str, state: str, decoder: Callable | None = None):
+	info = get_info_via_oauth(provider, code, decoder)
+	login_oauth_user(info, provider=provider, state=state)
 
 
 def get_info_via_oauth(provider: str, code: str, decoder: Callable | None = None, id_token: bool = False):

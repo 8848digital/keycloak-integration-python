@@ -14,9 +14,8 @@
  "fields": [
   {
    "fieldname": "user",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "User",
-   "options": "User",
    "unique": 1
   },
   {
@@ -28,7 +27,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-14 16:40:45.952077",
+ "modified": "2024-07-05 18:30:55.500954",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
  "name": "Erpnext User",

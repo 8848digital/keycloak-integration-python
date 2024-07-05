@@ -1,6 +1,6 @@
 import frappe
 from frappe.utils.password import check_password
-from keycloak.utils import success_response, error_response
+from keycloak.utils.utils import success_response, error_response
 
 def get_access_token(kwargs):
 	try:

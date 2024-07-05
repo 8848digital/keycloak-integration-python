@@ -1,38 +1,46 @@
 import frappe
 from frappe import _
+import json
 
 @frappe.whitelist()
 def assign_role_profile_in_frappe(kwargs):
     try:
+        print(kwargs)
         erp_username = frappe.db.get_value("Erpnext Keycloak User Mapping", {"keycloak_id": kwargs["user_id"]}, "erpnext_username") 
+        print(erp_username, "repnext")
+        kwargs["role_details"] = json.loads(kwargs.get("role_details").replace("{", '{"').replace("=", '":"').replace(", ", '","').replace("}", '"}'))
+        print(kwargs["role_details"], "roles")
         if frappe.db.exists("Erpnext User",erp_username):
-            doc = frappe.get_doc("Erpnext User",erp_username)
             if kwargs.get("operation") == "assign":
+                print(erp_username, "repnext")
+                doc = frappe.get_doc("Erpnext User",erp_username)
+                print(doc.name, "docname")
                 for row in kwargs.get("role_details"):
-                    if frappe.db.exists("Role Profile", {"role_profile": row.get("name")}):
-                        role_name = row.get("name")
+                    if row.get("id"):
+                        role_name = frappe.get_value("Erpnext Keycloak Role Profile Mapping", {"role_profile_id":row.get("id")}, "role_profile_name")
                         if role_name:
                             doc.append("role_profiles", {
                                 "role_profile": role_name
                             })
-                    doc.save()
-                    assign_collective_roles(erp_username)
+                doc.save()
+                assign_collective_roles(erp_username)
             elif kwargs.get("operation") == "unassign":
                 frappe.enqueue(remove_roles, kwargs=kwargs, erp_username=erp_username)         
         else:
             doc = frappe.new_doc("Erpnext User")
             doc.user = erp_username
+            print("in else")
             for row in kwargs.get("role_details"):
-                if frappe.db.exists("Role Profile", {"role_profile": row.get("name")}):
-                    role_name = row.get("name")
+                if row.get("id"):
+                    role_name = frappe.get_value("Erpnext Keycloak Role Profile Mapping", {"role_profile_id":row.get("id")}, "role_profile_name")
                     if role_name:
                         doc.append("role_profiles", {
                             "role_profile": role_name
                         })
-                        doc.save()
-                        assign_collective_roles(erp_username)
+            doc.save()
+            assign_collective_roles(erp_username)
             
-        doc.reload()     
+        # doc.reload()     
     except Exception as e:
         print("ISSUE : ",e)
         frappe.log_error("Issue: " + str(e))
@@ -62,7 +70,6 @@ def assign_collective_roles(erp_username):
 
 def remove_roles(kwargs, erp_username):
     try:
-        # Extract roles to unassign
         roles_to_unassign = [row.get("name") for row in kwargs.get("role_details", [])]        
         if roles_to_unassign:
             if frappe.db.exists("Role Profile",{"role_profile": ("in", roles_to_unassign)}):

@@ -10,7 +10,7 @@ def add_role_profile_in_keycloak(doc, method):
 def get_access_token():
     try:
         doc = frappe.get_doc("Keycloak Details")
-        url = f'{doc.url}/realms/myrealm/protocol/openid-connect/token'
+        url = f'{doc.url}/realms/master/protocol/openid-connect/token'
         payload = {
             'client_id': doc.client_id,
             'client_secret': doc.client_secret,
@@ -44,7 +44,7 @@ def create_new_role_profile(doc,access_token):
 
 def get_url_and_headers(access_token):
     doc = frappe.get_doc("Keycloak Details")
-    url = f"{doc.url}/admin/realms/myrealm/roles"
+    url = f"{doc.url}/admin/realms/master/roles"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"

@@ -1,5 +1,5 @@
 import frappe
-from keycloak.utils import success_response, error_response
+from keycloak.utils.utils import success_response, error_response
 import keycloak.api.v1.access_token as access_token
 import keycloak.api.v1.map_users as map_users
 import keycloak.api.v1.map_roles as map_roles
