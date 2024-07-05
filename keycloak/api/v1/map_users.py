@@ -3,7 +3,7 @@ from frappe import _
 
 @frappe.whitelist()
 def map_users_in_frappe(kwargs):
-	print(kwargs)
+	# print(kwargs)
 	if kwargs["operation"] == "create":
 		create_user_in_frappe(kwargs)
 	elif kwargs["operation"] == "update":
@@ -32,6 +32,8 @@ def create_frappe_keycloak_user_map(kwargs):
 		frappe.log_error("Unable to create user map : ",e)
 
 def update_user_in_frappe(kwargs):
+	print("111")
+	print(kwargs)
 	try:
 		doc = frappe.get_doc("User",kwargs.get("email"))
 		set_data_in_erpnext_user_doctype(kwargs,doc)
@@ -66,10 +68,6 @@ def set_data_in_erpnext_user_doctype(kwargs,doc):
 		if field in parameters_map.keys():
 			if field == "lastName" and value == "null":
 				doc.set(parameters_map[field],None)
-			# elif field == "userType":
-			# 	doc.set(parameters_map[field],"System Manager") if kwargs["userType"] == "System User" else doc.set(parameters_map[field],None)
-			elif field == "enableUser":
-				doc.set(parameters_map[field],1) if kwargs["enableUser"] == "Yes" else doc.set(parameters_map[field],0)
 			else:
 				doc.set(parameters_map[field],value)
 	doc.save(ignore_permissions=True)
