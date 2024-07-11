@@ -13,7 +13,7 @@ def create_role_profile_map(kwargs):
 		doc = frappe.new_doc("Erpnext Keycloak Role Profile Mapping")
 		doc.role_profile_name = kwargs["role_profile_details"]["name"]
 		doc.role_profile_id = kwargs["role_profile_details"]["id"]
-		doc.role_profile_site_name = kwargs.get("updated_keycloak_name")
+		doc.keycloak_realm_role_name = kwargs.get("updated_keycloak_name")
 		doc.save(ignore_permissions=True)
 	except Exception as e:
 		frappe.log_error("Unable to create role profile map", e)

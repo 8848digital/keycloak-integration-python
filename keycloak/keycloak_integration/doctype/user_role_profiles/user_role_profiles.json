@@ -31,7 +31,7 @@
  "modified": "2024-06-14 16:40:45.952077",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
- "name": "Erpnext User",
+ "name": "User Role Profiles",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
