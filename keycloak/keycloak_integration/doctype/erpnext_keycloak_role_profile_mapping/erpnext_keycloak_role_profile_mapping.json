@@ -9,7 +9,8 @@
  "engine": "InnoDB",
  "field_order": [
   "role_profile_name",
-  "role_profile_id"
+  "role_profile_id",
+  "keycloak_realm_role_name"
  ],
  "fields": [
   {
@@ -22,11 +23,16 @@
    "fieldname": "role_profile_id",
    "fieldtype": "Data",
    "label": "Role Profile Id"
+  },
+  {
+   "fieldname": "keycloak_realm_role_name",
+   "fieldtype": "Data",
+   "label": "Keycloak Realm Role Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-07 13:22:55.633390",
+ "modified": "2024-07-11 12:49:43.172309",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
  "name": "Erpnext Keycloak Role Profile Mapping",

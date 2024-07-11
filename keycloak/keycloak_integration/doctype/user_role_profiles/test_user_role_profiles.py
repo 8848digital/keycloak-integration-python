@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestErpnextUser(FrappeTestCase):
+class TestUserRoleProfiles(FrappeTestCase):
 	pass
