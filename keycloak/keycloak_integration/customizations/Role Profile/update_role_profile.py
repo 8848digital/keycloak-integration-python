@@ -3,19 +3,16 @@ from frappe import _
 
 def update_user_roles(doc, method): 
     if not doc.is_new():
-        print("I")
         lists = frappe.db.get_all("Role Profiles Table",filters={"role_profile":doc.role_profile},fields=["parent"])
         frappe.enqueue(assign_roles_based_on_selected_role_profiles,lists=lists)
     
-
-
 def assign_roles_based_on_selected_role_profiles(lists):
     for role_profiles in lists:
         assign_collective_roles(role_profiles.parent)
 
 def assign_collective_roles(erp_username):
     try:
-        custom_user_doc = frappe.get_doc("Erpnext User", erp_username)
+        custom_user_doc = frappe.get_doc("User Role Profiles", erp_username)
         collected_roles = set()
 
         for row in custom_user_doc.role_profiles:
