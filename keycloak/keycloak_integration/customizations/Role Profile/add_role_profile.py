@@ -37,7 +37,7 @@ def create_new_role_profile(doc,access_token):
 
         site_url = frappe.utils.get_url()
         if site_url:
-            role_profile_name["attributes"] = {"Site":[f"{site_url}"]}
+            role_profile_name["attributes"] = {"site_url":[f"{site_url}"]}
         response = requests.post(url, headers=headers, json=role_profile_name)
         
         if response.status_code == 201:
@@ -67,7 +67,17 @@ def delete_role_profile_in_keycloak(doc,method):
         response = requests.delete(delete_url, headers=headers)
         if response.status_code == 204:
             frappe.msgprint(_("Role deleted successfully."))
+            delete_role_profile_map(doc.role_profile)
         else:
             frappe.throw(_(response.text))  
     except Exception as e:
         frappe.throw(_(f"Failed to delete role. Error: {e}")) 
+
+def delete_role_profile_map(role_profile_name):
+    try:
+        if frappe.db.exists("Erpnext Keycloak Role Profile Mapping", role_profile_name):
+            frappe.delete_doc("Erpnext Keycloak Role Profile Mapping", role_profile_name)
+        else:
+            frappe.log_error("Role Profile Map not found in frappe")
+    except Exception as e:
+        frappe.log_error("Unable to delete Role Profile Map : ", e)
