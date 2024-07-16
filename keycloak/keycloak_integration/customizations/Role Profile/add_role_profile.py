@@ -37,7 +37,7 @@ def create_new_role_profile(doc,access_token):
 
         site_url = frappe.utils.get_url()
         if site_url:
-            role_profile_name["attributes"] = {"Site":[f"{site_url}"]}
+            role_profile_name["attributes"] = {"site_url":[f"{site_url}"]}
         response = requests.post(url, headers=headers, json=role_profile_name)
         
         if response.status_code == 201:
