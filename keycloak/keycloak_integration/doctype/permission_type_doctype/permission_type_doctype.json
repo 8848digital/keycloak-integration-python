@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-18 11:24:38.963150",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "allow_doctype",
+  "apply_to_all_document_types",
+  "applicable_for",
+  "hide_descendants",
+  "is_default"
+ ],
+ "fields": [
+  {
+   "fieldname": "allow_doctype",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Allow Doctype",
+   "options": "DocType"
+  },
+  {
+   "default": "0",
+   "fieldname": "apply_to_all_document_types",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Apply to all document types"
+  },
+  {
+   "fieldname": "applicable_for",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Applicable for",
+   "options": "DocType",
+   "read_only_depends_on": "eval: doc.apply_to_all_document_types == 1;"
+  },
+  {
+   "default": "0",
+   "fieldname": "hide_descendants",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Hide Descendants"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Default"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-22 11:12:07.092173",
+ "modified_by": "Administrator",
+ "module": "Keycloak Integration",
+ "name": "Permission Type Doctype",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
