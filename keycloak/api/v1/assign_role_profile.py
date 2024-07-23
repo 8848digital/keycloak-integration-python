@@ -24,6 +24,7 @@ def assign_role_profile_in_frappe(kwargs):
         else:
             doc = frappe.new_doc("User Role Profiles")
             doc.user = erp_username
+            print("in else")
             for row in kwargs.get("role_details"):
                 if row.get("id"):
                     role_name = frappe.get_value("Erpnext Keycloak Role Profile Mapping", {"role_profile_id":row.get("id")}, "role_profile_name")
