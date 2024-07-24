@@ -19,6 +19,15 @@ frappe.ui.form.on('Permission Type', {
 				doctype: row.allow_doctype
 			};
 		});
+
+		// set the hide descendants checkbox read only
+		frm.doc.permission_type_doctype.forEach(row => {
+			var hide_descendants_checkbox = toggle_hide_descendants(row);
+			if (hide_descendants_checkbox) {
+				frm.fields_dict.permission_type_doctype.grid.grid_rows[row.idx-1].docfields[3].read_only=0
+				frm.refresh_field("permission_type_doctype")
+			}
+		})
 	}
 });
 
