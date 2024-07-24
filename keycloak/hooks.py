@@ -169,6 +169,12 @@ override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
     "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom"
 }
+
+# Overriding the login method to authenticate based on conditions
+from frappe.auth import LoginManager
+from keycloak.auth import post_login
+LoginManager.post_login = post_login
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
