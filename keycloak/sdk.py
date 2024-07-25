@@ -4,7 +4,6 @@ from keycloak.api.V1 import V1
 import time
 @frappe.whitelist(allow_guest=True)
 def api(**kwargs):
-    print(kwargs)
     try:
         st = time.time()
         version = kwargs.get('version') 
