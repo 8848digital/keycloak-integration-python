@@ -5,11 +5,38 @@ import frappe
 from frappe.model.document import Document
 
 class UserandPermissionConfiguration(Document):
-	pass
 	def before_save(self):
 		self.create_user_permissions()
 
+
 	def create_user_permissions(self):
+		previous_permission_type = frappe.get_value(self.doctype, self.name, pluck = "name")
+		previous_permission_type_doctypes = frappe.get_all("Permission Type Doctype", filters={"parent": previous_permission_type}, fields = ["allow_doctype", "apply_to_all_document_types", "applicable_for", "hide_descendants", "is_default"])
+		previous_records = frappe.get_all("User Permission Doctype Value", filters = {"parent": self.name}, fields = ["doc_type", "value"])
+		previous_configs = self.create_config(previous_permission_type_doctypes, previous_records)
+
+		current_permission_type_doctypes = previous_permission_type_doctypes
+		current_records = self.user_permission_doctype_value
+		current_configs = self.create_config(current_permission_type_doctypes, current_records)
+
+		
+
+		
+	def create_config(self, config_doctypes, records):
+		config_doctype_map = {}
+		for config_doctype in config_doctypes:
+			config_doctype_map[config_doctype.get("allow_doctype")] = config_doctype
+		configs = []
+		for record in records:
+			config = {"value": record.get("value")}
+			config.update(config_doctype_map.get(record.get("doc_type")))
+			configs.append(config)
+		return configs
+
+
+
+
+
 		user_permission_records = []
 		doctype_list = []
 		for doctype in self.user_permission_doctype_value:
