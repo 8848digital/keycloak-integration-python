@@ -36,14 +36,15 @@ class UserandPermissionConfiguration(Document):
 def filter_doctypes_based_on_permissions(doctype, txt, searchfield, start, page_len, filters):
 	permission_type = filters.get("permission_type")
 	if permission_type:
-		filtered_doctypes = f"""
-			SELECT child.allow_doctype
-			FROM `tabPermission Type` as parent
-			LEFT JOIN `tabPermission Type Doctype` as child
-			ON child.parent = parent.name
-			WHERE parent.name = "{permission_type}" 
-		"""
-		print(frappe.db.sql(filtered_doctypes))
-		return frappe.db.sql(filtered_doctypes)
+		permission_type_parent = frappe.qb.DocType('Permission Type')
+		permission_type_child = frappe.qb.DocType('Permission Type Doctype')
+		query = (
+			frappe.qb.from_(permission_type_parent)
+			.left_join(permission_type_child)
+			.on(permission_type_child.parent == permission_type_parent.name)
+			.select(permission_type_child.allow_doctype)
+			.where(permission_type_parent.name == permission_type)
+		).run()		
+		return query
 	else:
 		return []
