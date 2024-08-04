@@ -5,32 +5,113 @@ import frappe
 from frappe.model.document import Document
 
 class UserandPermissionConfiguration(Document):
-	pass
+	def validate(self):
+		self.validate_permission_type_doctype()
+
 	def before_save(self):
 		self.create_user_permissions()
 
+	def validate_permission_type_doctype(self):
+		permission_type_doctypes = frappe.get_all("Permission Type Doctype", filters={"parent": self.permission_type}, fields = ["allow_doctype"], pluck = "allow_doctype")
+		for record in self.user_permission_doctype_value:
+			if record.doc_type not in permission_type_doctypes:
+				frappe.throw(f'row {record.idx}: Doctype "{record.doc_type}" not present in Permission Type "{self.permission_type}"')
+	
 	def create_user_permissions(self):
-		user_permission_records = []
-		doctype_list = []
-		for doctype in self.user_permission_doctype_value:
-			user_permission_record = {
-				"doctype": "User Permission",
-				"user": self.user,
-				"allow": doctype.doc_type,
-				"for_value": doctype.value
-			}
-			user_permission_records.append(user_permission_record)
-			doctype_list.append(doctype.doc_type)
-		doctype_details = frappe.get_all("Permission Type Doctype", filters={"parent": self.permission_type, "allow_doctype": ["In", doctype_list]}, fields = ["allow_doctype", "apply_to_all_document_types", "applicable_for", "hide_descendants", "is_default"])
-		doctype_details_map = {}
-		for doctype_detail in doctype_details:
-			doctype_details_map[doctype_detail.allow_doctype] = doctype_detail
-		for record in user_permission_records:
-			doctype_detail = doctype_details_map.get(record.get("allow")) or {}
-			if doctype_detail:
-				record.update(doctype_detail)
-				record.update({"apply_to_all_doctypes": doctype_detail.get("apply_to_all_document_types")})
-				frappe.get_doc(record).insert()
+		previous_user = frappe.get_value(self.doctype, self.name, "user")
+		previous_records = frappe.get_all("User Permission Doctype Value", filters = {"parent": self.name}, fields = ["for_value", "user_permission_record", "allow_doctype", "apply_to_all_doctypes", "applicable_for", "hide_descendants", "is_default", "doc_type"])
+		previous_configs = create_config(previous_records, previous_records, previous_user)
+
+		current_permission_type_doctypes = frappe.get_all("Permission Type Doctype", filters={"parent": self.permission_type}, fields = ["allow_doctype", "apply_to_all_doctypes", "applicable_for", "hide_descendants", "is_default"])
+		current_records = self.user_permission_doctype_value
+		current_configs = create_config(current_permission_type_doctypes, current_records, self.user)
+
+		configs_to_remove, configs_to_add = compare_configs(previous_configs, current_configs)
+		self.remove_user_permission_record(configs_to_remove) 
+		self.create_user_permission_record(configs_to_add)
+
+
+	def create_user_permission_record(self, configs_to_add):
+		for config in configs_to_add:
+			if not config.get("user_permission_record"):
+				record = {"doctype": "User Permission"}
+				record.update(config)
+				try:
+					record["user_permission_record"] = frappe.get_doc(record).insert().name
+					del record["doctype"]
+					del record["allow"]
+					for row in self.user_permission_doctype_value:
+						if row.doc_type == record.get("allow_doctype") and row.for_value == record.get("for_value"):
+							row.update(record)
+				except Exception as e:
+					frappe.throw(str(e)+" for config "+ str(config))
+	
+	def remove_user_permission_record(self, configs_to_remove):
+		for config in configs_to_remove:
+			user_permission_record = config.get("user_permission_record")
+			if user_permission_record:
+				try:
+					frappe.delete_doc("User Permission", user_permission_record)
+				except Exception as e:
+					frappe.throw(str(e)+" for config "+ str(config))
+
+def dict_to_tuple(d):
+		"""Convert a dictionary to a sorted tuple of key-value pairs."""
+		return tuple(sorted(d.items()))
+
+def compare_configs(prev_config, current_config):
+
+	prev_config_normalized = [normalize_dict(d) for d in prev_config]
+	current_config_normalized = [normalize_dict(d) for d in current_config]
+	"""Compare previous and current configuration lists to determine what to remove and add."""
+	# Convert lists of dicts to sets of tuples
+	prev_set = set(dict_to_tuple(d) for d in prev_config_normalized)
+	current_set = set(dict_to_tuple(d) for d in current_config_normalized)
+	print(prev_set)
+	print(current_set)
+	
+	# Determine items to remove and add
+	to_remove = prev_set - current_set
+	to_add = current_set - prev_set
+	
+	# Convert tuples back to dictionaries
+	to_remove_list = [dict(t) for t in to_remove]
+	to_add_list = [dict(t) for t in to_add]
+	
+	return to_remove_list, to_add_list
+
+
+
+	
+
+	
+def create_config(config_doctypes, records, user):
+	config_doctype_map = {}
+	for config_doctype in config_doctypes:
+		config_doctype_map[config_doctype.get("allow_doctype")] = config_doctype
+	configs = []
+	for record in records:
+		if config_doctype_map.get(record.get("doc_type")):
+			config = {
+						"user": user,
+						"for_value": record.get("for_value"),
+						"user_permission_record": record.get("user_permission_record")
+					}
+			config.update(config_doctype_map.get(record.get("doc_type")) or {})
+			config["allow"] = config.get("allow_doctype")
+			configs.append(config)	
+	return configs
+
+def normalize_dict(d):
+    """Normalize dictionary values to ensure consistent types for comparison."""
+    normalized_dict = {}
+    for k, v in d.items():
+        # Convert values to string for consistent comparison
+        if isinstance(v, (int, float)):
+            normalized_dict[k] = str(v)
+        else:
+            normalized_dict[k] = v
+    return normalized_dict
 
 @frappe.whitelist()
 def filter_doctypes_based_on_permissions(doctype, txt, searchfield, start, page_len, filters):
