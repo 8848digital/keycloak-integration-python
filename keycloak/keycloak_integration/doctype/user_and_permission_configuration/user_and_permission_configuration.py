@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 class UserandPermissionConfiguration(Document):
@@ -10,6 +11,9 @@ class UserandPermissionConfiguration(Document):
 
 	def before_save(self):
 		self.create_user_permissions()
+
+	def on_trash(self):
+		self.delete_user_permission_records()
 
 	def validate_permission_type_doctype(self):
 		permission_type_doctypes = frappe.get_all("Permission Type Doctype", filters={"parent": self.permission_type}, fields = ["allow_doctype"], pluck = "allow_doctype")
@@ -30,21 +34,20 @@ class UserandPermissionConfiguration(Document):
 		self.remove_user_permission_record(configs_to_remove) 
 		self.create_user_permission_record(configs_to_add)
 
-
 	def create_user_permission_record(self, configs_to_add):
 		for config in configs_to_add:
-			if not config.get("user_permission_record"):
-				record = {"doctype": "User Permission"}
-				record.update(config)
-				try:
-					record["user_permission_record"] = frappe.get_doc(record).insert().name
-					del record["doctype"]
-					del record["allow"]
-					for row in self.user_permission_doctype_value:
-						if row.doc_type == record.get("allow_doctype") and row.for_value == record.get("for_value"):
-							row.update(record)
-				except Exception as e:
-					frappe.throw(str(e)+" for config "+ str(config))
+			# if not config.get("user_permission_record"):
+			record = {"doctype": "User Permission"}
+			record.update(config)
+			try:
+				record["user_permission_record"] = frappe.get_doc(record).insert().name
+				del record["doctype"]
+				del record["allow"]
+				for row in self.user_permission_doctype_value:
+					if row.doc_type == record.get("allow_doctype") and str(row.for_value) == record.get("for_value"):
+						row.update(record)
+			except Exception as e:
+				frappe.throw(str(e)+" for config "+ str(config))
 	
 	def remove_user_permission_record(self, configs_to_remove):
 		for config in configs_to_remove:
@@ -55,12 +58,21 @@ class UserandPermissionConfiguration(Document):
 				except Exception as e:
 					frappe.throw(str(e)+" for config "+ str(config))
 
+	def delete_user_permission_records(self):
+		try:
+			doc = frappe.get_doc("User and Permission Configuration",self.name)
+			for row in doc.user_permission_doctype_value:
+				frappe.delete_doc("User Permission",row.user_permission_record)
+			frappe.msgprint(_("User Permission Deleted Successfully"))
+		except Exception as e:
+			frappe.throw(_("Error : " + e))
+
+
 def dict_to_tuple(d):
 		"""Convert a dictionary to a sorted tuple of key-value pairs."""
 		return tuple(sorted(d.items()))
 
 def compare_configs(prev_config, current_config):
-
 	prev_config_normalized = [normalize_dict(d) for d in prev_config]
 	current_config_normalized = [normalize_dict(d) for d in current_config]
 	"""Compare previous and current configuration lists to determine what to remove and add."""
@@ -79,12 +91,8 @@ def compare_configs(prev_config, current_config):
 	to_add_list = [dict(t) for t in to_add]
 	
 	return to_remove_list, to_add_list
-
-
-
 	
 
-	
 def create_config(config_doctypes, records, user):
 	config_doctype_map = {}
 	for config_doctype in config_doctypes:
