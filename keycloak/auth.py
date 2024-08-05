@@ -11,7 +11,7 @@ def post_login(self):
     self.make_session()
     
     doc = frappe.get_doc("User", frappe.session.user)
-    if frappe.db.exists("User Permission",{"user":doc.email}) or frappe.session.user == "Administrator":
+    if frappe.db.exists("User Permission",{"user":doc.email}) or frappe.session.user == "Administrator" or frappe.flags.in_setup_wizard == True:
         self.setup_boot_cache()
         self.set_user_info()
     else:
