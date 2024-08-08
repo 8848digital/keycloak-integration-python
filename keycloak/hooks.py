@@ -135,6 +135,9 @@ doc_events = {
     "Module Profile" : {
         "validate": "keycloak.keycloak_integration.customizations.Module Profile.add_module_profile.add_module_profile_in_keycloak",
         "on_trash": "keycloak.keycloak_integration.customizations.Module Profile.add_module_profile.delete_module_profile_in_keycloak"
+    },
+    "User Permission": {
+        "on_trash": "keycloak.keycloak_integration.customizations.User Permission.delete_user_permission.delete_user_permission"
     }
 }
 # Scheduled Tasks
