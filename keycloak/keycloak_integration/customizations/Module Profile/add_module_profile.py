@@ -9,11 +9,14 @@ def add_module_profile_in_keycloak(doc, method):
 
 def get_access_token():
     try:
-        doc = frappe.get_doc("Keycloak Details")
-        url = f'{doc.url}/realms/myrealm/protocol/openid-connect/token'
+        doc = frappe.get_doc("Social Login Key", "keycloak")
+        if "/" == doc.base_url[-1]:
+            url = doc.base_url+doc.access_token_url
+        else:
+            url = doc.base_url + "/" + doc.access_token_url
         payload = {
             'client_id': doc.client_id,
-            'client_secret': doc.client_secret,
+            'client_secret': doc.get_password("client_secret"),
             'grant_type': 'client_credentials'
         }
         headers = {
@@ -47,8 +50,11 @@ def create_new_module_profile(doc,access_token):
         frappe.throw(_(f"Failed to add Module Profile. Error: {e}"))
 
 def get_url_and_headers(access_token):
-    doc = frappe.get_doc("Keycloak Details")
-    url = f"{doc.url}/admin/realms/myrealm/groups"
+    doc = frappe.get_value("Social Login Key", "keycloak", ["root_url", "realm_name"], as_dict = 1)
+    if "/" == doc.root_url[-1]:
+        url = f"{doc.root_url}admin/realms/{doc.realm_name}/groups"
+    else:
+        url = f"{doc.root_url}/admin/realms/{doc.realm_name}/groups"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"

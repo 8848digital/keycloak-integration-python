@@ -13,6 +13,7 @@ class UserandPermissionConfiguration(Document):
 		self.create_user_permissions()
 
 	def after_delete(self):
+		print("after delete activate")
 		self.delete_user_permission_records()
 
 	def validate_permission_type_doctype(self):
@@ -61,18 +62,24 @@ class UserandPermissionConfiguration(Document):
 	def remove_user_permission_record(self, configs_to_remove):
 		for config in configs_to_remove:
 			user_permission_record = config.get("user_permission_record")
+			print(user_permission_record)
 			if user_permission_record:
 				try:
-					frappe.delete_doc("User Permission", user_permission_record)
+					doc = frappe.get_doc("User Permission", user_permission_record)
+					print(doc)
+					doc.flags.upc_delete_request = 1
+					doc.delete()
 				except Exception as e:
 					frappe.throw(str(e)+" for config "+ str(config))
 	
 	def delete_user_permission_records(self):
-		print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 		try:
 			# doc = frappe.get_doc("User and Permission Configuration",self.name)
 			for row in self.user_permission_doctype_value:
-				frappe.delete_doc("User Permission",row.user_permission_record)
+				print()
+				doc = frappe.get_doc("User Permission",row.user_permission_record)
+				doc.flags.upc_delete_request = 1
+				doc.delete()
 			frappe.msgprint(_("User Permission Deleted Successfully"))
 		except Exception as e:
 			print(e," :Error")
