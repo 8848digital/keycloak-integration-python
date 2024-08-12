@@ -48,8 +48,9 @@ def create_new_role_profile(doc,access_token):
         frappe.throw(_(f"Failed to add Role Profile. Error: {e}"))
 
 def get_url_and_headers(access_token):
-    base_url = frappe.db.get_value("Social Login Key", "keycloak", "base_url").strip("/realms/master")
-    url = f"{base_url}/admin/realms/master/roles"
+    base_url = frappe.db.get_value("Social Login Key", "keycloak", "base_url").strip("/realms/myrealm")
+    print(base_url)
+    url = f"{base_url}/admin/realms/myrealm/roles"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"

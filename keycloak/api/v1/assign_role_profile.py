@@ -84,6 +84,7 @@ def remove_roles(kwargs, erp_username):
                 if len(user_role_profiles.role_profiles) > 0:
                     assign_collective_roles(erp_username)
                 else:
+                    assign_collective_roles(erp_username)
                     frappe.delete_doc("User Role Profiles",erp_username)
             else:
                 frappe.log_error("No roles provided to unassign.")

@@ -11,3 +11,14 @@ frappe.ui.form.on('User and Permission Configuration', {
 		});
 	}
 });
+
+
+frappe.ui.form.on('User Permission Doctype Value', {
+	doc_type: function(frm,cdt,cdn) {
+		var child = locals[cdt][cdn];
+		if (child.value) {
+			child.value = null;
+			frm.refresh_field("user_permission_doctype_value");
+		}
+	}
+});

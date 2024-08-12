@@ -7,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "allow_doctype",
-  "apply_to_all_document_types",
+  "apply_to_all_doctypes",
   "applicable_for",
   "hide_descendants",
   "is_default"
@@ -19,13 +19,6 @@
    "in_list_view": 1,
    "label": "Allow Doctype",
    "options": "DocType"
-  },
-  {
-   "default": "1",
-   "fieldname": "apply_to_all_document_types",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Apply to all document types"
   },
   {
    "fieldname": "applicable_for",
@@ -50,12 +43,19 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Is Default"
+  },
+  {
+   "default": "1",
+   "fieldname": "apply_to_all_doctypes",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Apply to all document types"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-22 13:23:33.598414",
+ "modified": "2024-08-04 18:20:20.631984",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
  "name": "Permission Type Doctype",
