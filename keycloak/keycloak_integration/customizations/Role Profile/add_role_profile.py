@@ -11,7 +11,10 @@ def add_role_profile_in_keycloak(doc, method):
 def get_access_token():
     try:
         doc = frappe.get_doc("Social Login Key", "keycloak")
-        url = f'{doc.base_url}/protocol/openid-connect/token'
+        if "/" == doc.base_url[-1]:
+            url = doc.base_url+doc.access_token_url
+        else:
+            url = doc.base_url + "/" + doc.access_token_url
         payload = {
             'client_id': doc.client_id,
             'client_secret': doc.get_password("client_secret"),
@@ -48,9 +51,11 @@ def create_new_role_profile(doc,access_token):
         frappe.throw(_(f"Failed to add Role Profile. Error: {e}"))
 
 def get_url_and_headers(access_token):
-    base_url = frappe.db.get_value("Social Login Key", "keycloak", "base_url").strip("/realms/myrealm")
-    print(base_url)
-    url = f"{base_url}/admin/realms/myrealm/roles"
+    doc = frappe.get_value("Social Login Key", "keycloak", ["root_url", "realm_name"], as_dict = 1)
+    if "/" == doc.root_url[-1]:
+        url = f"{doc.root_url}admin/realms/{doc.realm_name}/roles"
+    else:
+        url = f"{doc.root_url}/admin/realms/{doc.realm_name}/roles"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"

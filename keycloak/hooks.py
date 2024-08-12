@@ -138,6 +138,9 @@ doc_events = {
     },
     "User Permission": {
         "on_trash": "keycloak.keycloak_integration.customizations.User Permission.delete_user_permission.delete_user_permission"
+    },
+    "Social Login Key": {
+        "before_validate": "keycloak.keycloak_integration.customizations.social_login_key.social_login_key.before_validate"
     }
 }
 # Scheduled Tasks
