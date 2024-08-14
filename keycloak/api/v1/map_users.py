@@ -12,44 +12,29 @@ def map_users_in_frappe(kwargs):
 		delete_user_in_frappe(kwargs)
 
 def create_user_in_frappe(kwargs):
-	try:
-		doc = frappe.new_doc("User")
-		set_data_in_erpnext_user_doctype(kwargs,doc)
+	doc = frappe.new_doc("User")
+	set_data_in_erpnext_user_doctype(kwargs,doc)
 
-		# Map user and user-id
-		create_frappe_keycloak_user_map(kwargs)
-	except Exception as e:
-		print(e)
-		frappe.log_error("Unable to create User : ", e)
+	# Map user and user-id
+	create_frappe_keycloak_user_map(kwargs)
 
 def create_frappe_keycloak_user_map(kwargs):
-	try:
-		doc = frappe.new_doc("Erpnext Keycloak User Mapping")
-		doc.erpnext_username = kwargs.get("email")
-		doc.keycloak_id = kwargs.get("id")
-		doc.save(ignore_permissions=True)
-	except Exception as e:
-		frappe.log_error("Unable to create user map : ",e)
+	doc = frappe.new_doc("Erpnext Keycloak User Mapping")
+	doc.erpnext_username = kwargs.get("email")
+	doc.keycloak_id = kwargs.get("id")
+	doc.save(ignore_permissions=True)
 
 def update_user_in_frappe(kwargs):
-	print("111")
-	print(kwargs)
-	try:
-		doc = frappe.get_doc("User",kwargs.get("email"))
-		set_data_in_erpnext_user_doctype(kwargs,doc)
-	except Exception as e:
-		frappe.log_error("Unable to update User : ",e)
+	doc = frappe.get_doc("User",kwargs.get("email"))
+	set_data_in_erpnext_user_doctype(kwargs,doc)
 
 def delete_user_in_frappe(kwargs):
-	try:
-		erp_username = frappe.db.get_value("Erpnext Keycloak User Mapping",{"keycloak_id": kwargs["id"]},"erpnext_username")
-		if erp_username is not None:
-				frappe.delete_doc("User",erp_username)
-				frappe.delete_doc("Erpnext Keycloak User Mapping",erp_username)
-		else:
-			frappe.log_error("Username not found in frappe")
-	except Exception as e:
-		frappe.log_error("Unable to delete User : ", e)
+	erp_username = frappe.db.get_value("Erpnext Keycloak User Mapping",{"keycloak_id": kwargs["id"]},"erpnext_username")
+	if erp_username is not None:
+			frappe.delete_doc("User",erp_username)
+			frappe.delete_doc("Erpnext Keycloak User Mapping",erp_username)
+	else:
+		frappe.log_error("Username not found in frappe")
 
 def map_fieldnames_of_erp_and_keycloak():
     parameters_map = {
