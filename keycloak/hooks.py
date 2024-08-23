@@ -123,14 +123,24 @@ app_license = "MIT"
 # 		"on_trash": "method"
 # 	}
 # }
+
+on_logout = "keycloak.overrides.logout.logout"
+
 doc_events = {
     "Role Profile" : {
+        "before_validate": "keycloak.keycloak_integration.customizations.Role Profile.update_role_profile.update_user_roles",
         "validate": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.add_role_profile_in_keycloak",
         "on_trash": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.delete_role_profile_in_keycloak" 
     },
     "Module Profile" : {
         "validate": "keycloak.keycloak_integration.customizations.Module Profile.add_module_profile.add_module_profile_in_keycloak",
         "on_trash": "keycloak.keycloak_integration.customizations.Module Profile.add_module_profile.delete_module_profile_in_keycloak"
+    },
+    "User Permission": {
+        "on_trash": "keycloak.keycloak_integration.customizations.User Permission.delete_user_permission.delete_user_permission"
+    },
+    "Social Login Key": {
+        "before_validate": "keycloak.keycloak_integration.customizations.social_login_key.social_login_key.before_validate"
     }
 }
 # Scheduled Tasks
@@ -161,10 +171,16 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
-#     "frappe.core.doctype.user.user.sign_up": "keycloak.keycloak_integration.customizations.User.add_user_via_signup.sign_up"
-# }
+override_whitelisted_methods = {
+	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
+    "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom"
+}
+
+# Overriding the login method to authenticate based on conditions
+from frappe.auth import LoginManager
+from keycloak.auth import post_login
+LoginManager.post_login = post_login
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
@@ -222,3 +238,20 @@ doc_events = {
 # auth_hooks = [
 # 	"keycloak.auth.validate"
 # ]
+
+fixtures = [
+    {"dt": "Property Setter", "filters": [
+        [
+            "module", "in", [
+                "Keycloak Integration"
+            ]
+        ]
+    ]},
+    {"dt": "Custom Field", "filters": [
+        [
+            "module", "in", [
+                "Keycloak Integration"
+            ]
+        ]
+    ]}
+]

@@ -1,18 +1,22 @@
 import frappe
 from frappe import _
-from keycloak.utils import error_response
-import json
-
 
 @frappe.whitelist()
 def map_roles_in_frappe(kwargs):
-	try:
-		erp_username = frappe.db.get_value("Erpnext Keycloak User Mapping",{"keycloak_id": kwargs["user_id"]},"erpnext_username")
-		if erp_username is not None:
-			doc = frappe.get_doc("User",erp_username)
-			doc.role_profile_name = kwargs["role_details"][0]["name"] if kwargs["operation"] == "assign" else None
-			doc.save(ignore_permissions=True)
-		else:
-			print("Username not found")
-	except Exception as e:
-		print(e)
+	if kwargs["operation"] == "create":
+		create_role_profile_map(kwargs)
+	elif kwargs["operation"] == "delete":
+		delete_role_profile_map(kwargs)
+		
+def create_role_profile_map(kwargs):
+	doc = frappe.new_doc("Erpnext Keycloak Role Profile Mapping")
+	doc.role_profile_name = kwargs["role_profile_details"]["name"]
+	doc.role_profile_id = kwargs["role_profile_details"]["id"]
+	doc.keycloak_realm_role_name = kwargs.get("updated_keycloak_name")
+	doc.save(ignore_permissions=True)
+
+def delete_role_profile_map(kwargs):
+	if frappe.db.exists("Erpnext Keycloak Role Profile Mapping", kwargs["role_profile_name"]):
+		frappe.delete_doc("Erpnext Keycloak Role Profile Mapping", kwargs["role_profile_name"])
+	else:
+		frappe.log_error("Role Profile Map not found in frappe")

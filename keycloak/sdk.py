@@ -1,5 +1,5 @@
 import frappe
-from keycloak.utils import success_response, error_response
+from keycloak.utils.utils import success_response, error_response
 from keycloak.api.V1 import V1
 import time
 @frappe.whitelist(allow_guest=True)
@@ -17,5 +17,5 @@ def api(**kwargs):
             response['exec_time'] = f"{round(et - st, 4)} seconds"
         return response
     except Exception as e:
-        frappe.logger("registration").exception(e)
-        return error_response(e)
+        frappe.log_error("API", frappe.get_traceback())
+        frappe.throw(e)
