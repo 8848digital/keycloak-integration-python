@@ -6,26 +6,30 @@ import requests
 def add_role_profile_in_keycloak(doc, method):
     if doc.is_new():
         token = get_access_token()
-        create_new_role_profile(doc, token)
+        if token:
+            create_new_role_profile(doc, token)
 
 def get_access_token():
-    doc = frappe.get_doc("Social Login Key", "keycloak")
-    if "/" == doc.base_url[-1]:
-        url = doc.base_url+doc.access_token_url
-    else:
-        url = doc.base_url + "/" + doc.access_token_url
-    payload = {
-        'client_id': doc.client_id,
-        'client_secret': doc.get_password("client_secret"),
-        'grant_type': 'client_credentials'
-    }
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    if frappe.db.exists("Social Login Key","keycloak"):
+        doc = frappe.get_doc("Social Login Key", "keycloak")
+        if doc.enable_keycloak:
+            if "/" == doc.base_url[-1]:
+                url = doc.base_url+doc.access_token_url
+            else:
+                url = doc.base_url + "/" + doc.access_token_url
+            payload = {
+                'client_id': doc.client_id,
+                'client_secret': doc.get_password("client_secret"),
+                'grant_type': 'client_credentials'
+            }
+            headers = {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
 
-    response = requests.post(url, headers=headers, data=payload)
-    data = response.json()
-    return data["access_token"]
+            response = requests.post(url, headers=headers, data=payload)
+            data = response.json()
+            return data["access_token"]
+    return None
 
 def create_new_role_profile(doc,access_token):
     url,headers = get_url_and_headers(access_token)
@@ -58,16 +62,17 @@ def get_url_and_headers(access_token):
 
 def delete_role_profile_in_keycloak(doc,method):
     access_token = get_access_token()
-    url,headers = get_url_and_headers(access_token)
-    mapped_doc = frappe.get_doc("Erpnext Keycloak Role Profile Mapping",doc.role_profile)
+    if access_token:
+        url,headers = get_url_and_headers(access_token)
+        mapped_doc = frappe.get_doc("Erpnext Keycloak Role Profile Mapping",doc.role_profile)
 
-    delete_url = f"{url}/{mapped_doc.keycloak_realm_role_name}"
-    response = requests.delete(delete_url, headers=headers)
-    if response.status_code == 204:
-        frappe.msgprint(_("Role deleted successfully."))
-        delete_role_profile_map(doc.role_profile)
-    else:
-        frappe.throw(_(response.text)) 
+        delete_url = f"{url}/{mapped_doc.keycloak_realm_role_name}"
+        response = requests.delete(delete_url, headers=headers)
+        if response.status_code == 204:
+            frappe.msgprint(_("Role deleted successfully."))
+            delete_role_profile_map(doc.role_profile)
+        else:
+            frappe.throw(_(response.text)) 
 
 def delete_role_profile_map(role_profile_name):
     if frappe.db.exists("Erpnext Keycloak Role Profile Mapping", role_profile_name):

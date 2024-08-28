@@ -17,5 +17,5 @@ def api(**kwargs):
             response['exec_time'] = f"{round(et - st, 4)} seconds"
         return response
     except Exception as e:
-        frappe.log_error("API", frappe.get_traceback())
+        frappe.log_error("API", frappe.get_traceback(with_context=True))
         frappe.throw(e)
