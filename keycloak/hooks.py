@@ -124,7 +124,7 @@ app_license = "MIT"
 # 	}
 # }
 
-on_logout = "keycloak.overrides.logout.logout"
+# on_logout = "keycloak.overrides.logout.logout"
 
 doc_events = {
     "Role Profile" : {
@@ -173,7 +173,7 @@ doc_events = {
 #
 override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
-    # "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom"
+    "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom_keycloak_sso"
 }
 
 # Overriding the login method to authenticate based on conditions
@@ -181,9 +181,6 @@ from frappe.auth import LoginManager
 from keycloak.auth import post_login
 LoginManager.post_login = post_login
 
-import frappe.utils.oauth
-from keycloak.utils.oauth import get_info_via_oauth
-frappe.utils.oauth.get_info_via_oauth = get_info_via_oauth
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
