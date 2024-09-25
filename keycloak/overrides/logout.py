@@ -3,7 +3,6 @@ import requests
 import json
 import urllib.parse
 from keycloak.utils.utils import get_access_token
-from urllib.parse import urljoin
 
 def logout():
     provider = frappe.request.cookies.get('provider')
@@ -21,11 +20,10 @@ def logout_user_from_provider(provider):
 
 def delete_keycloak_session(base_url, session_state, provider):
     base_url = base_url.replace("realms", "admin/realms")
-    url = f"{base_url}sessions/{session_state}"
-    access_token = get_access_token()
     if not base_url.endswith('/'):
         base_url += '/'
-    url = urljoin(base_url, f"sessions/{session_state}")
+    url = f"{base_url}sessions/{session_state}"
+    access_token = get_access_token()
     headers = {
     'Authorization': f'Bearer {access_token}'
     }
