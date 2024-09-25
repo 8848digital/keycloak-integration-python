@@ -124,7 +124,7 @@ app_license = "MIT"
 # 	}
 # }
 
-# on_logout = "keycloak.overrides.logout.logout"
+on_logout = "keycloak.overrides.logout.logout"
 
 doc_events = {
     "Role Profile" : {

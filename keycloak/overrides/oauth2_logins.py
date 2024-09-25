@@ -10,7 +10,6 @@ def custom_keycloak_sso(code: str, state: str):
 		provider = path[3]
 		frappe.local.cookie_manager.set_cookie("provider", provider)
 		url = frappe.safe_decode(frappe.request.query_string)
-		frappe.log_error("SSO", url)
 		frappe.local.cookie_manager.set_cookie(provider, json.dumps(url))
 	custom(code = code, state = state)
 		
