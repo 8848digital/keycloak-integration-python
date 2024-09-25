@@ -173,7 +173,7 @@ doc_events = {
 #
 override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "keycloak.event.get_events"
-    "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom"
+    "frappe.integrations.oauth2_logins.custom": "keycloak.overrides.oauth2_logins.custom_keycloak_sso"
 }
 
 # Overriding the login method to authenticate based on conditions
