@@ -31,14 +31,14 @@ def delete_keycloak_session(base_url, session_state, provider):
     }
     response = requests.delete(url, headers=headers)
     if response.status_code == 204:
+        frappe.msgprint(f"Logout successfully from {frappe.get_value('Social Login Key', provider, 'provider_name')}")
+    else:
         error_log = {
         "response": response.text,
         "base_url": base_url,
         "session_state": session_state,
         "access_token": access_token
         }
-        frappe.msgprint(f"Logout successfully from {frappe.get_value('Social Login Key', provider, 'provider_name')}")
-    else:
         frappe.log_error("SSO Logout Error", error_log)
         frappe.msgprint(f"Logout from {frappe.get_value('Social Login Key', provider, 'provider_name')} failed")
 
