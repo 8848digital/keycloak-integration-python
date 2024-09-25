@@ -20,6 +20,8 @@ def logout_user_from_provider(provider):
 
 def delete_keycloak_session(base_url, session_state, provider):
     base_url = base_url.replace("realms", "admin/realms")
+    if not base_url.endswith('/'):
+        base_url += '/'
     url = f"{base_url}sessions/{session_state}"
     access_token = get_access_token()
     headers = {
@@ -29,6 +31,13 @@ def delete_keycloak_session(base_url, session_state, provider):
     if response.status_code == 204:
         frappe.msgprint(f"Logout successfully from {frappe.get_value('Social Login Key', provider, 'provider_name')}")
     else:
+        error_log = {
+        "response": response.text,
+        "base_url": base_url,
+        "session_state": session_state,
+        "access_token": access_token
+        }
+        frappe.log_error("SSO Logout Error", error_log)
         frappe.msgprint(f"Logout from {frappe.get_value('Social Login Key', provider, 'provider_name')} failed")
 
 def send_logout_request(base_url, logout_endpoint, client_id, client_secret, refresh_token, provider):
