@@ -65,3 +65,25 @@ def get_count(doctype, **args):
     except Exception as e:
         frappe.logger('project').exception(e)
         return error_response(str(e))
+    
+def get_access_token():
+    if frappe.db.exists("Social Login Key","keycloak"):
+        doc = frappe.get_doc("Social Login Key", "keycloak")
+        if doc.enable_keycloak:
+            if "/" == doc.base_url[-1]:
+                url = doc.base_url+doc.access_token_url
+            else:
+                url = doc.base_url + "/" + doc.access_token_url
+            payload = {
+                'client_id': doc.client_id,
+                'client_secret': doc.get_password("client_secret"),
+                'grant_type': 'client_credentials'
+            }
+            headers = {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+
+            response = requests.post(url, headers=headers, data=payload)
+            data = response.json()
+            return data["access_token"]
+    return None

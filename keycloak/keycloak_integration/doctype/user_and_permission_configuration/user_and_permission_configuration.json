@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{user}-{permission_type}",
  "creation": "2024-07-18 13:20:51.750577",
  "default_view": "List",
  "doctype": "DocType",
@@ -33,10 +34,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-18 13:20:51.750577",
+ "modified": "2024-09-16 18:59:05.666181",
  "modified_by": "Administrator",
  "module": "Keycloak Integration",
  "name": "User and Permission Configuration",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
