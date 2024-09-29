@@ -2,7 +2,7 @@ import frappe
 import requests
 import json
 import urllib.parse
-from keycloak.utils.utils import get_access_token
+from keycloak.utils.utils import get_keycloak_access_token
 
 def logout():
     provider = frappe.request.cookies.get('provider')
@@ -23,7 +23,7 @@ def delete_keycloak_session(base_url, session_state, provider):
     if not base_url.endswith('/'):
         base_url += '/'
     url = f"{base_url}sessions/{session_state}"
-    access_token = get_access_token()
+    access_token = get_keycloak_access_token()
     headers = {
     'Authorization': f'Bearer {access_token}'
     }
