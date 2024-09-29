@@ -66,7 +66,7 @@ def get_count(doctype, **args):
         frappe.logger('project').exception(e)
         return error_response(str(e))
     
-def get_access_token():
+def get_keycloak_access_token():
     if frappe.db.exists("Social Login Key","keycloak"):
         doc = frappe.get_doc("Social Login Key", "keycloak")
         if doc.enable_keycloak:
