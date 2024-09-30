@@ -126,4 +126,4 @@ def assign_role_profile_in_keycloak(kwargs):
     }
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code != 204:
-        frappe.log_error({"response": response.text, "keycloak_user_id": kwargs["user_id"], "keycloak_role": kwargs["role_details"][0]["name"]}, f"Unable To Assign Role: {kwargs["role_details"][0]["name"]} In Keycloak")
+        frappe.log_error({"response": response.text, "keycloak_user_id": kwargs["user_id"], "keycloak_role": kwargs["role_details"][0]["name"]}, f"Unable To Assign Role: {kwargs['role_details'][0]['name']} In Keycloak")
