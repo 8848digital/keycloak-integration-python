@@ -117,7 +117,7 @@ def assign_role_profile_in_keycloak(kwargs):
     base_url = frappe.get_value("Social Login Key", "keycloak", "base_url").strip("/")
     realm = base_url.split('/')[-1]
     base_url = base_url.replace("realms", "admin/realms")
-    url = f"{base_url}/{realm}/users/{kwargs["user_id"]}/role-mappings/realm"
+    url = "{}/{}/users/{}/role-mappings/realm".format(base_url, realm, kwargs["user_id"])
     payload = [{'id': kwargs["role_details"][0]["id"], 'name': kwargs["role_details"][0]["name"]}]
     access_token = get_keycloak_access_token()
     headers = {
