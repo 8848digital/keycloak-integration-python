@@ -128,16 +128,16 @@ on_logout = "keycloak.overrides.logout.logout"
 
 doc_events = {
     "Role Profile" : {
-        "before_validate": "keycloak.keycloak_integration.customizations.Role Profile.update_role_profile.update_user_roles",
-        "validate": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.add_role_profile_in_keycloak",
-        "on_trash": "keycloak.keycloak_integration.customizations.Role Profile.add_role_profile.delete_role_profile_in_keycloak" 
+        "before_validate": "keycloak.keycloak_integration.customizations.role_profile.update_role_profile.update_user_roles",
+        "validate": "keycloak.keycloak_integration.customizations.role_profile.add_role_profile.add_role_profile_in_keycloak",
+        "on_trash": "keycloak.keycloak_integration.customizations.role_profile.add_role_profile.delete_role_profile_in_keycloak" 
     },
     "Module Profile" : {
         "validate": "keycloak.keycloak_integration.customizations.Module Profile.add_module_profile.add_module_profile_in_keycloak",
         "on_trash": "keycloak.keycloak_integration.customizations.Module Profile.add_module_profile.delete_module_profile_in_keycloak"
     },
     "User Permission": {
-        "on_trash": "keycloak.keycloak_integration.customizations.User Permission.delete_user_permission.delete_user_permission"
+        "on_trash": "keycloak.keycloak_integration.customizations.user_permission.delete_user_permission.delete_user_permission"
     },
     "Social Login Key": {
         "before_validate": "keycloak.keycloak_integration.customizations.social_login_key.social_login_key.before_validate"

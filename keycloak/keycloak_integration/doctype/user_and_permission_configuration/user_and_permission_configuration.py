@@ -13,7 +13,6 @@ class UserandPermissionConfiguration(Document):
 		self.create_user_permissions()
 
 	def after_delete(self):
-		print("after delete activate")
 		self.delete_user_permission_records()
 
 	def validate_permission_type_doctype(self):
@@ -25,22 +24,15 @@ class UserandPermissionConfiguration(Document):
 	def create_user_permissions(self):
 		previous_user = frappe.get_value(self.doctype, self.name, "user")
 		previous_records = frappe.get_all("User Permission Doctype Value", filters = {"parent": self.name}, fields = ["for_value", "user_permission_record", "allow_doctype", "apply_to_all_doctypes", "applicable_for", "hide_descendants", "is_default", "doc_type"])
-		print("Previous Records : ",previous_records)
-		print("..............................................................")
-		
+	
 		previous_configs = create_config(previous_records, previous_records, previous_user)
 
 		current_permission_type_doctypes = frappe.get_all("Permission Type Doctype", filters={"parent": self.permission_type}, fields = ["allow_doctype", "apply_to_all_doctypes", "applicable_for", "hide_descendants", "is_default"])
 		current_records = self.user_permission_doctype_value
 		current_configs = create_config(current_permission_type_doctypes, current_records, self.user)
 
-		print("Current config : ",current_configs)
-		print("Previous config : ",previous_configs)
-		print("....................................................")
-
 		configs_to_remove, configs_to_add = compare_configs(previous_configs, current_configs)
-		print("Configs to add " ,configs_to_add)
-		print("Configs to remove " ,configs_to_remove)
+
 		self.remove_user_permission_record(configs_to_remove) 
 		self.create_user_permission_record(configs_to_add)
 
@@ -62,11 +54,9 @@ class UserandPermissionConfiguration(Document):
 	def remove_user_permission_record(self, configs_to_remove):
 		for config in configs_to_remove:
 			user_permission_record = config.get("user_permission_record")
-			print(user_permission_record)
 			if user_permission_record:
 				try:
 					doc = frappe.get_doc("User Permission", user_permission_record)
-					print(doc)
 					doc.flags.upc_delete_request = 1
 					doc.delete()
 				except Exception as e:
@@ -76,13 +66,11 @@ class UserandPermissionConfiguration(Document):
 		try:
 			# doc = frappe.get_doc("User and Permission Configuration",self.name)
 			for row in self.user_permission_doctype_value:
-				print()
 				doc = frappe.get_doc("User Permission",row.user_permission_record)
 				doc.flags.upc_delete_request = 1
 				doc.delete()
 			frappe.msgprint(_("User Permission Deleted Successfully"))
 		except Exception as e:
-			print(e," :Error")
 			frappe.throw(_("Error : ", e))
 
 
@@ -97,8 +85,6 @@ def compare_configs(prev_config, current_config):
 	# Convert lists of dicts to sets of tuples
 	prev_set = set(dict_to_tuple(d) for d in prev_config_normalized)
 	current_set = set(dict_to_tuple(d) for d in current_config_normalized)
-	print(prev_set)
-	print(current_set)
 	
 	# Determine items to remove and add
 	to_remove = prev_set - current_set
@@ -119,7 +105,6 @@ def create_config(config_doctypes, records, user):
 															"applicable_for":config_doctype.get("applicable_for"),
 															"hide_descendants":config_doctype.get("hide_descendants"),
 															"is_default":config_doctype.get("is_default")}
-	print(config_doctype_map, "jrgghugh")
 	configs = []
 	for record in records:
 		if config_doctype_map.get(record.get("doc_type")):
@@ -130,7 +115,6 @@ def create_config(config_doctypes, records, user):
 					}
 			config.update(config_doctype_map.get(record.get("doc_type")) or {})
 			config["allow"] = config.get("allow_doctype")
-			print(config)
 			configs.append(config)	
 	return configs
 
