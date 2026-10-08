@@ -1,7 +1,7 @@
 [project]
 name = "keycloak"
 authors = [
-    { name = "Amandeep", email = "amandeep@8848digital.com"}
+    { name = "8848 Digital LLP", email = "amandeep@8848digital.com"}
 ]
 description = "Keycloak Integration"
 requires-python = ">=3.10"
