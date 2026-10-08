@@ -33,7 +33,7 @@ class TestRoleClaims(FrappeTestCase):
 		Create a user and two Role Profiles sharing one role.
 
 		Returns:
-			None
+		        None
 		"""
 		super().setUpClass()
 		make_user(EMAIL)

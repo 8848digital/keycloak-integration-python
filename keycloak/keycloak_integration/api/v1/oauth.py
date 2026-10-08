@@ -14,7 +14,8 @@ from keycloak.keycloak_integration.sso_session import delete_keycloak_session, r
 from keycloak.utils.keycloak_admin import KEYCLOAK_PROVIDER
 
 
-@frappe.whitelist(allow_guest=True)
+# Reviewed: the identity provider redirects a not-yet-logged-in browser here.
+@frappe.whitelist(allow_guest=True)  # nosemgrep
 def login_via_keycloak(code: str, state: str, session_state: str | None = None, **kwargs):
 	"""
 	Complete a Keycloak login exactly like Frappe's standard
@@ -26,10 +27,10 @@ def login_via_keycloak(code: str, state: str, session_state: str | None = None, 
 	(overrides the standard method via `override_whitelisted_methods`)
 	**HTTP Method:** GET (redirect from Keycloak)
 	**Parameters:**
-		- code (str, required): The OAuth authorization code.
-		- state (str, required): The OAuth state issued by Frappe.
-		- session_state (str, optional): Keycloak's SSO session id.
-		- Other keys (optional): Ignored (for example "iss").
+	        - code (str, required): The OAuth authorization code.
+	        - state (str, required): The OAuth state issued by Frappe.
+	        - session_state (str, optional): Keycloak's SSO session id.
+	        - Other keys (optional): Ignored (for example "iss").
 	**Response:**
 	A redirect to the desk (or the "redirect_to" stored in state), set by
 	Frappe's login flow. On failure, Frappe's standard error page; a user
@@ -55,18 +56,21 @@ def __refuse_without_access(session_state):
 	and show a clear page instead of a bare 401.
 
 	Parameters:
-		session_state (str, optional): Keycloak's session id.
+	        session_state (str, optional): Keycloak's session id.
 
 	Returns:
-		None
+	        None
 	"""
-	frappe.db.commit()
+	# GET requests are rolled back; Frappe's own login_oauth_user commits for the same reason.
+	frappe.db.commit()  # nosemgrep
 	if session_state:
 		delete_keycloak_session(session_state, notify=False)
 
 	frappe.respond_as_web_page(
 		_("Access not set up"),
-		_("You signed in with Keycloak, but your ERPNext access is not set up yet. Ask your administrator to give you a User Permission, then sign in again."),
+		_(
+			"You signed in with Keycloak, but your ERPNext access is not set up yet. Ask your administrator to give you a User Permission, then sign in again."
+		),
 		http_status_code=403,
 		indicator_color="orange",
 	)

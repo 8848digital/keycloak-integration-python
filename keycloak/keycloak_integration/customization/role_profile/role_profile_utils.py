@@ -29,10 +29,10 @@ def create_role_profile_in_keycloak(doc):
 	or groups in Keycloak as usual. A Keycloak error blocks the save.
 
 	Parameters:
-		doc (Document, required): The Role Profile.
+	        doc (Document, required): The Role Profile.
 
 	Returns:
-		None
+	        None
 	"""
 	if not doc.is_new():
 		return
@@ -42,7 +42,10 @@ def create_role_profile_in_keycloak(doc):
 		return
 
 	roles_path = f"clients/{get_site_client_uuid(access_token)}/roles"
-	role = {"name": doc.role_profile, "description": _("ERPNext Role Profile {0}").format(doc.role_profile)}
+	role = {
+		"name": doc.role_profile,
+		"description": _("ERPNext Role Profile {0}").format(doc.role_profile),
+	}
 	response = admin_request("POST", roles_path, access_token, json=role)
 	if response.status_code not in (201, 409):
 		frappe.throw(_("Keycloak rejected the role: {0}").format(response.text))
@@ -59,10 +62,10 @@ def delete_role_profile_in_keycloak(doc):
 	A Role Profile with no mapping (never synced) is deleted locally only.
 
 	Parameters:
-		doc (Document, required): The Role Profile.
+	        doc (Document, required): The Role Profile.
 
 	Returns:
-		None
+	        None
 	"""
 	access_token = get_keycloak_access_token()
 	if not access_token:
@@ -89,10 +92,10 @@ def queue_user_role_refresh(doc):
 	it. Queued after commit, so the job reads the saved roles.
 
 	Parameters:
-		doc (Document, required): The Role Profile.
+	        doc (Document, required): The Role Profile.
 
 	Returns:
-		None
+	        None
 	"""
 	if doc.is_new():
 		return
@@ -113,10 +116,10 @@ def refresh_user_roles(usernames):
 	failing user is logged and does not stop the others.
 
 	Parameters:
-		usernames (list[str], required): ERPNext User names.
+	        usernames (list[str], required): ERPNext User names.
 
 	Returns:
-		None
+	        None
 	"""
 	for username in usernames:
 		try:
@@ -130,11 +133,11 @@ def __upsert_mapping(role_profile, role_id):
 	Record the Keycloak role of a Role Profile.
 
 	Parameters:
-		role_profile (str, required): The Role Profile name (also the role name).
-		role_id (str, optional): The Keycloak role id.
+	        role_profile (str, required): The Role Profile name (also the role name).
+	        role_id (str, optional): The Keycloak role id.
 
 	Returns:
-		None
+	        None
 	"""
 	values = {"role_profile_id": role_id, "keycloak_realm_role_name": role_profile}
 	if frappe.db.exists(ROLE_PROFILE_MAPPING_DOCTYPE, role_profile):

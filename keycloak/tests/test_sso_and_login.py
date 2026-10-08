@@ -65,7 +65,7 @@ class TestSsoLogout(FrappeTestCase):
 		Give the test a fake logged-in session id.
 
 		Returns:
-			None
+		        None
 		"""
 		self.original_sid = frappe.session.sid
 		frappe.session.sid = "kc-test-sid"
@@ -75,7 +75,7 @@ class TestSsoLogout(FrappeTestCase):
 		Restore the real session id.
 
 		Returns:
-			None
+		        None
 		"""
 		frappe.session.sid = self.original_sid
 
@@ -110,7 +110,9 @@ class TestKeycloakAdmin(FrappeTestCase):
 
 	def test_join_url(self):
 		"""Slashes are normalised between parts."""
-		self.assertEqual(keycloak_admin.join_url("http://kc/", "/realms/", "erp"), "http://kc/realms/erp")
+		self.assertEqual(
+			keycloak_admin.join_url("http://kc/", "/realms/", "erp"), "http://kc/realms/erp"
+		)
 
 	def test_admin_realm_url_and_token(self):
 		"""The token request uses the derived base_url and a timeout."""
@@ -140,7 +142,7 @@ class TestKeycloakAdmin(FrappeTestCase):
 		Remove the test Social Login Key.
 
 		Returns:
-			None
+		        None
 		"""
 		frappe.delete_doc("Social Login Key", "keycloak", ignore_missing=True, force=True)
 

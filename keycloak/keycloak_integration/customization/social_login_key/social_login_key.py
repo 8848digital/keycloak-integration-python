@@ -15,10 +15,10 @@ def before_validate(doc, method=None):
 	Fill in base_url, root_url and realm_name from each other.
 
 	Parameters:
-		doc (Document, required): The Social Login Key.
-		method (str, optional): The hook event name.
+	        doc (Document, required): The Social Login Key.
+	        method (str, optional): The hook event name.
 
 	Returns:
-		None
+	        None
 	"""
 	set_missing_url(doc)

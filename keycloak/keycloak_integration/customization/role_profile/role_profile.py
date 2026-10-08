@@ -17,11 +17,11 @@ def before_validate(doc, method=None):
 	Queue a role refresh for every user holding this Role Profile.
 
 	Parameters:
-		doc (Document, required): The Role Profile.
-		method (str, optional): The hook event name.
+	        doc (Document, required): The Role Profile.
+	        method (str, optional): The hook event name.
 
 	Returns:
-		None
+	        None
 	"""
 	queue_user_role_refresh(doc)
 
@@ -31,11 +31,11 @@ def validate(doc, method=None):
 	Create the matching realm role in Keycloak for a new Role Profile.
 
 	Parameters:
-		doc (Document, required): The Role Profile.
-		method (str, optional): The hook event name.
+	        doc (Document, required): The Role Profile.
+	        method (str, optional): The hook event name.
 
 	Returns:
-		None
+	        None
 	"""
 	create_role_profile_in_keycloak(doc)
 
@@ -45,10 +45,10 @@ def on_trash(doc, method=None):
 	Delete the matching realm role from Keycloak.
 
 	Parameters:
-		doc (Document, required): The Role Profile.
-		method (str, optional): The hook event name.
+	        doc (Document, required): The Role Profile.
+	        method (str, optional): The hook event name.
 
 	Returns:
-		None
+	        None
 	"""
 	delete_role_profile_in_keycloak(doc)

@@ -12,7 +12,6 @@ from frappe import _
 
 from keycloak.keycloak_integration.sync.access_token import get_access_token
 from keycloak.keycloak_integration.sync.keycloak_events import handle_event
-from keycloak.keycloak_integration.sync.responses import error_response
 
 # (version, entity, method) -> handler. An explicit allow-list: the request
 # can only reach these functions.
@@ -28,7 +27,8 @@ GUEST_ENTITIES = {"access_token"}
 SYNC_ROLE = "System Manager"
 
 
-@frappe.whitelist(allow_guest=True, methods=["POST"])
+# Reviewed: only "access_token" runs for Guest (rate-limited); every other entity needs System Manager.
+@frappe.whitelist(allow_guest=True, methods=["POST"])  # nosemgrep
 def api(**kwargs):
 	"""
 	Run one allow-listed action. The Keycloak event listener pushes user,
@@ -39,19 +39,22 @@ def api(**kwargs):
 	(the legacy path `/api/method/keycloak.sdk.api` is aliased to it in hooks.py)
 	**HTTP Method:** POST
 	**Parameters:**
-		- version (str, required): API version. Only "v1" is supported.
-		- entity (str, required): "keycloak_events" or "access_token".
-		- method (str, required): "handle_event" or "get_access_token".
-		- operation (str, keycloak_events): upsert_user / disable_user / logout_user.
-		- user (dict, keycloak_events): {id, username, email, firstName, lastName, enabled}.
-		- roles (list[str], optional): The user's client roles for this site.
-		- usr / pwd (str, access_token): User name and password.
+	        - version (str, required): API version. Only "v1" is supported.
+	        - entity (str, required): "keycloak_events" or "access_token".
+	        - method (str, required): "handle_event" or "get_access_token".
+	        - operation (str, keycloak_events): upsert_user / disable_user / logout_user.
+	        - user (dict, keycloak_events): {id, username, email, firstName, lastName, enabled}.
+	        - roles (list[str], optional): The user's client roles for this site.
+	        - usr / pwd (str, access_token): User name and password.
 	**Response:**
 	```json
 	{"message": {"user": "jane@example.com", "operation": "upsert_user", "exec_time": "0.0123 seconds"}}
 	{"message": {"msg": "success", "data": {"access_token": "token <key>:<secret>"}, "exec_time": "0.0123 seconds"}}
 	```
-	Unknown
+	Unknown versions, entities or methods fail with a validation error. With
+	the app's after_request hook, every response uses the standard envelope
+	`{"status", "status_code", "message", "data", "errors"}`; the payload above
+	is under `data`. Unknown
 	entities and methods respond with `{"message": {"msg": "error", "error": "..."}}`.
 	"""
 	started_at = time.monotonic()
@@ -59,7 +62,7 @@ def api(**kwargs):
 
 	handler = HANDLERS.get((kwargs.get("version"), kwargs.get("entity"), kwargs.get("method")))
 	if not handler:
-		return error_response(_("Unsupported version, entity or method"))
+		frappe.throw(_("Unsupported version, entity or method"))
 
 	# Explicit check: frappe.only_for() is skipped in tests, and this guard must hold everywhere.
 	if kwargs.get("entity") not in GUEST_ENTITIES and SYNC_ROLE not in frappe.get_roles():

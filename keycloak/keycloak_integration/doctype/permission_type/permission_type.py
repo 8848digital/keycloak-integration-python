@@ -21,7 +21,7 @@ class PermissionType(Document):
 		configuration already uses.
 
 		Returns:
-			None
+		        None
 		"""
 		validate_unique_doctypes(self)
 		validate_row_options(self)

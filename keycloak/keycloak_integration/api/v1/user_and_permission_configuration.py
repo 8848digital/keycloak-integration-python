@@ -10,7 +10,9 @@ import frappe
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def filter_doctypes_based_on_permissions(doctype, txt, searchfield, start, page_len, filters):
+def filter_doctypes_based_on_permissions(
+	doctype: str, txt: str, searchfield: str, start: int, page_len: int, filters: dict
+):
 	"""
 	Link-field search query: list only the DocTypes of the selected
 	Permission Type, so the user cannot pick an unsupported DocType.
@@ -19,12 +21,12 @@ def filter_doctypes_based_on_permissions(doctype, txt, searchfield, start, page_
 	(called by Desk's link search through `frappe.desk.search.search_widget`)
 	**HTTP Method:** GET / POST
 	**Parameters:**
-		- doctype (str, required): The linked DocType ("DocType").
-		- txt (str, required): The text typed in the link field.
-		- searchfield (str, required): Ignored.
-		- start (int, required): Offset for paging.
-		- page_len (int, required): Page size.
-		- filters (dict, required): Needs "permission_type".
+	        - doctype (str, required): The linked DocType ("DocType").
+	        - txt (str, required): The text typed in the link field.
+	        - searchfield (str, required): Ignored.
+	        - start (int, required): Offset for paging.
+	        - page_len (int, required): Page size.
+	        - filters (dict, required): Needs "permission_type".
 	**Response:**
 	```json
 	{"message": [["Customer"], ["Company"]]}

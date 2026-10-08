@@ -63,7 +63,7 @@ See [CLAUDE.md](./CLAUDE.md) for internal module/folder layout and coding conven
 
 ## Maintainers
 
-8848 Digital LLP — Amandeep (amandeep@8848digital.com)
+8848 Digital LLP — Satyabrata Panda (satya@8848digital.com)
 
 ## License
 

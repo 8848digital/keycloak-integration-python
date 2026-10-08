@@ -25,13 +25,20 @@ def kc_user(**fields):
 	Build a Keycloak user as the listener sends it.
 
 	Parameters:
-		**fields: Fields to override.
+	        **fields: Fields to override.
 
 	Returns:
-		dict: The Keycloak user.
+	        dict: The Keycloak user.
 	"""
-	return {"id": KEYCLOAK_ID, "username": "kc-event", "email": EMAIL, "firstName": "Kay", "lastName": "Event",
-		"enabled": True, **fields}
+	return {
+		"id": KEYCLOAK_ID,
+		"username": "kc-event",
+		"email": EMAIL,
+		"firstName": "Kay",
+		"lastName": "Event",
+		"enabled": True,
+		**fields,
+	}
 
 
 class TestKeycloakEvents(FrappeTestCase):
@@ -43,7 +50,7 @@ class TestKeycloakEvents(FrappeTestCase):
 		Create a Role Profile used as a Keycloak client role.
 
 		Returns:
-			None
+		        None
 		"""
 		super().setUpClass()
 		make_role_profile(PROFILE, ["Sales User", "Stock User"])
@@ -53,7 +60,7 @@ class TestKeycloakEvents(FrappeTestCase):
 		Restore the Administrator session.
 
 		Returns:
-			None
+		        None
 		"""
 		frappe.set_user("Administrator")
 
@@ -111,4 +118,10 @@ class TestKeycloakEvents(FrappeTestCase):
 		"""Guests cannot push events through the API."""
 		frappe.set_user("Guest")
 		with self.assertRaises(frappe.PermissionError):
-			api(version="v1", entity="keycloak_events", method="handle_event", operation="upsert_user", user=kc_user())
+			api(
+				version="v1",
+				entity="keycloak_events",
+				method="handle_event",
+				operation="upsert_user",
+				user=kc_user(),
+			)

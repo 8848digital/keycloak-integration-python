@@ -22,31 +22,31 @@ class TestSdkApi(FrappeTestCase):
 		Restore the Administrator session after each test.
 
 		Returns:
-			None
+		        None
 		"""
 		frappe.set_user("Administrator")
 
 	def test_retired_sync_entities_are_refused(self):
 		"""User/role sync moved to the standard login; the old entities are gone."""
 		frappe.set_user("Guest")
-		response = api(**self.__user_payload("create"))
+		with self.assertRaises(frappe.ValidationError):
+			api(**self.__user_payload("create"))
 		frappe.set_user("Administrator")
-		self.assertEqual(response["msg"], "error")
 		self.assertFalse(frappe.db.exists("User", SYNC_EMAIL))
 
 	def test_unknown_method_is_not_executed(self):
 		"""The old eval() dispatch ran attacker-chosen code; now it is refused."""
-		response = api(
-			version="v1",
-			entity="map_users",
-			method="map_users_in_frappe(None) or frappe.db.sql('select 1')",
-		)
-		self.assertEqual(response["msg"], "error")
+		with self.assertRaises(frappe.ValidationError):
+			api(
+				version="v1",
+				entity="map_users",
+				method="map_users_in_frappe(None) or frappe.db.sql('select 1')",
+			)
 
 	def test_unknown_version_is_refused(self):
 		"""Version "v2" used to raise NameError; now it is a clean error."""
-		response = api(version="v2", entity="map_users", method="map_users_in_frappe")
-		self.assertEqual(response["msg"], "error")
+		with self.assertRaises(frappe.ValidationError):
+			api(version="v2", entity="map_users", method="map_users_in_frappe")
 
 	def test_guest_access_token_wrong_password(self):
 		"""Guest may call access_token, but wrong passwords get a generic error."""
@@ -75,10 +75,10 @@ class TestSdkApi(FrappeTestCase):
 		Build a map_users payload like the Keycloak listener sends.
 
 		Parameters:
-			operation (str, required): create / update / delete.
+		        operation (str, required): create / update / delete.
 
 		Returns:
-			dict: The request parameters.
+		        dict: The request parameters.
 		"""
 		return {
 			"version": "v1",

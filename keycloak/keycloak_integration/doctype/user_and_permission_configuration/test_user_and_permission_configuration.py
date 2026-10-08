@@ -24,7 +24,7 @@ class TestUserandPermissionConfiguration(FrappeTestCase):
 		Create the user and a Permission Type for Company.
 
 		Returns:
-			None
+		        None
 		"""
 		super().setUpClass()
 		make_user(USER)
@@ -50,7 +50,9 @@ class TestUserandPermissionConfiguration(FrappeTestCase):
 		).insert(ignore_permissions=True)
 
 		record = config.user_permission_doctype_value[0].user_permission_record
-		self.assertTrue(frappe.db.exists("User Permission", {"name": record, "user": USER, "allow": "Company"}))
+		self.assertTrue(
+			frappe.db.exists("User Permission", {"name": record, "user": USER, "allow": "Company"})
+		)
 
 		# Deleting the managed User Permission directly is blocked.
 		with self.assertRaises(frappe.ValidationError):

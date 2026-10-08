@@ -14,7 +14,7 @@ class UserRoleProfiles(Document):
 		Drop duplicate Role Profile rows, keeping the first one.
 
 		Returns:
-			None
+		        None
 		"""
 		seen = set()
 		unique_rows = []

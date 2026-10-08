@@ -254,6 +254,10 @@ Login** links the user to the Keycloak id), **Role Profile**, **User Permission*
 All calls go to `POST /api/method/keycloak.sdk.api` (alias of
 `keycloak.keycloak_integration.api.v1.sdk.api`).
 
+Every response uses the standard 8848 envelope `{status, status_code,
+message, data, errors}` (the app's `after_request` hook); the result is under
+`data`. Errors keep their HTTP status (403 not permitted, 417 validation).
+
 **Keycloak events** (System Manager only; sent by the listener):
 
 ```shell
@@ -263,7 +267,8 @@ curl -X POST http://127.0.0.1:8010/api/method/keycloak.sdk.api \
        "operation":"upsert_user",
        "user":{"id":"8c1f…","username":"jane","email":"jane@example.com","firstName":"Jane","enabled":true},
        "roles":["Demo Sales Executive"]}'
-# {"message":{"user":"jane@example.com","operation":"upsert_user","exec_time":"0.08 seconds"}}
+# {"status":true,"status_code":200,"message":"Request processed successfully",
+#  "data":{"user":"jane@example.com","operation":"upsert_user","exec_time":"0.08 seconds"},"errors":null}
 ```
 
 **Access token** (Guest; rate-limited to 10 calls per 10 minutes per IP):
@@ -272,7 +277,8 @@ curl -X POST http://127.0.0.1:8010/api/method/keycloak.sdk.api \
 curl -X POST http://127.0.0.1:8010/api/method/keycloak.sdk.api \
   -H "Content-Type: application/json" \
   -d '{"version":"v1","entity":"access_token","method":"get_access_token","usr":"jane@example.com","pwd":"..."}'
-# {"message":{"msg":"success","data":{"access_token":"token <key>:<secret>"}, ...}}
+# {"status":true,"status_code":200,"message":"Request processed successfully",
+#  "data":{"msg":"success","data":{"access_token":"token <key>:<secret>"}, ...},"errors":null}
 ```
 
 It returns the user's existing API key and secret. Users created through

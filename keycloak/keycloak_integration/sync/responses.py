@@ -11,10 +11,10 @@ def success_response(data=None):
 	Build the legacy success payload.
 
 	Parameters:
-		data (Any, optional): The payload.
+	        data (Any, optional): The payload.
 
 	Returns:
-		dict: {"msg": "success", "data": data}
+	        dict: {"msg": "success", "data": data}
 	"""
 	return {"msg": "success", "data": data}
 
@@ -24,9 +24,9 @@ def error_response(err_msg):
 	Build the legacy error payload.
 
 	Parameters:
-		err_msg (str, required): The error message.
+	        err_msg (str, required): The error message.
 
 	Returns:
-		dict: {"msg": "error", "error": err_msg}
+	        dict: {"msg": "error", "error": err_msg}
 	"""
 	return {"msg": "error", "error": str(err_msg)}

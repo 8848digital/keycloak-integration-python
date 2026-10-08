@@ -16,11 +16,11 @@ def make_user(email, roles=None):
 	Create (or return) a website-free System User for tests.
 
 	Parameters:
-		email (str, required): The user's email (also the User name).
-		roles (list[str], optional): Roles to grant.
+	        email (str, required): The user's email (also the User name).
+	        roles (list[str], optional): Roles to grant.
 
 	Returns:
-		Document: The User.
+	        Document: The User.
 	"""
 	if frappe.db.exists("User", email):
 		return frappe.get_doc("User", email)
@@ -39,11 +39,11 @@ def make_role_profile(name, roles):
 	Create (or return) a Role Profile with the given roles.
 
 	Parameters:
-		name (str, required): The Role Profile name.
-		roles (list[str], required): Roles in the profile.
+	        name (str, required): The Role Profile name.
+	        roles (list[str], required): Roles in the profile.
 
 	Returns:
-		Document: The Role Profile.
+	        Document: The Role Profile.
 	"""
 	if frappe.db.exists("Role Profile", name):
 		return frappe.get_doc("Role Profile", name)
@@ -58,10 +58,10 @@ def make_keycloak_login_key(enabled=1):
 	Create the "keycloak" Social Login Key used by the Admin API helpers.
 
 	Parameters:
-		enabled (int, optional): Value of the enable_keycloak custom field.
+	        enabled (int, optional): Value of the enable_keycloak custom field.
 
 	Returns:
-		Document: The Social Login Key.
+	        Document: The Social Login Key.
 	"""
 	frappe.delete_doc("Social Login Key", "keycloak", ignore_missing=True, force=True)
 	return frappe.get_doc(
@@ -88,9 +88,9 @@ class FakeResponse:
 	def __init__(self, status_code=200, payload=None, text=""):
 		"""
 		Parameters:
-			status_code (int, optional): HTTP status.
-			payload (dict, optional): Value returned by json().
-			text (str, optional): Body text.
+		        status_code (int, optional): HTTP status.
+		        payload (dict, optional): Value returned by json().
+		        text (str, optional): Body text.
 		"""
 		self.status_code = status_code
 		self.payload = payload or {}
@@ -99,7 +99,7 @@ class FakeResponse:
 	def json(self):
 		"""
 		Returns:
-			dict: The JSON payload.
+		        dict: The JSON payload.
 		"""
 		return self.payload
 
@@ -108,7 +108,7 @@ class FakeResponse:
 		Raise like requests does for 4xx/5xx responses.
 
 		Returns:
-			None
+		        None
 		"""
 		if self.status_code >= 400:
 			raise Exception(f"HTTP {self.status_code}")

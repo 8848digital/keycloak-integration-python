@@ -3,8 +3,7 @@
 // of this file, via any medium, is strictly prohibited without prior
 // written permission from 8848 Digital LLP.
 
-frappe.ui.form.on('Erpnext Keycloak Role Profile Mapping', {
+frappe.ui.form.on("Erpnext Keycloak Role Profile Mapping", {
 	// refresh: function(frm) {
-
 	// }
 });

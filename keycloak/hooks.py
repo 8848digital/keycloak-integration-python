@@ -7,7 +7,7 @@ app_name = "keycloak"
 app_title = "Keycloak Integration"
 app_publisher = "8848 Digital LLP"
 app_description = "Keycloak Integration"
-app_email = "amandeep@8848digital.com"
+app_email = "satya@8848digital.com"
 app_license = "Proprietary"
 
 required_apps = ["frappe"]
@@ -21,6 +21,9 @@ custom_fixtures = [
 ]
 
 commands = ["keycloak.commands.export_fixtures.export_fixtures"]
+
+# Standard 8848 response envelope for every /api/method/keycloak... endpoint.
+after_request = ["keycloak.utils.api_handlers.response_formatter.format_frappe_response_to_custom"]
 
 # Authentication
 # --------------

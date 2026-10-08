@@ -5,5 +5,6 @@
 
 from frappe.model.document import Document
 
+
 class ErpnextKeycloakRoleProfileMapping(Document):
 	"""Links an ERPNext Role Profile to its Keycloak realm role."""

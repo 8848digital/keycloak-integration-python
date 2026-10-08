@@ -20,7 +20,7 @@ class UserandPermissionConfiguration(Document):
 		Only allow DocTypes that the selected Permission Type contains.
 
 		Returns:
-			None
+		        None
 		"""
 		validate_permission_type_doctypes(self)
 
@@ -29,7 +29,7 @@ class UserandPermissionConfiguration(Document):
 		Create and delete User Permission records to match the rows.
 
 		Returns:
-			None
+		        None
 		"""
 		sync_user_permissions(self)
 
@@ -38,6 +38,6 @@ class UserandPermissionConfiguration(Document):
 		Delete the User Permission records this configuration created.
 
 		Returns:
-			None
+		        None
 		"""
 		delete_user_permission_records(self)

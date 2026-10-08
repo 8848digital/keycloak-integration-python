@@ -5,17 +5,14 @@
 
 from frappe import _
 
+
 def get_data():
 	"""
 	Describe the desk module icon (legacy desktop config).
 
 	Returns:
-		list[dict]: One entry for the Keycloak Integration module.
+	        list[dict]: One entry for the Keycloak Integration module.
 	"""
 	return [
-		{
-			"module_name": "Keycloak Integration",
-			"type": "module",
-			"label": _("Keycloak Integration")
-		}
+		{"module_name": "Keycloak Integration", "type": "module", "label": _("Keycloak Integration")}
 	]

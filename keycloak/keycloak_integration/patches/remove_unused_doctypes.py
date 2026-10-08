@@ -9,7 +9,11 @@ import frappe
 
 # Replaced by Frappe's standard "User Social Login" link and by the
 # real-time listener, which no longer mirrors groups.
-UNUSED_DOCTYPES = ("Erpnext Keycloak User Mapping", "Module Profile Name", "Keycloak Erpnext Group Mapping")
+UNUSED_DOCTYPES = (
+	"Erpnext Keycloak User Mapping",
+	"Module Profile Name",
+	"Keycloak Erpnext Group Mapping",
+)
 
 
 def execute():
@@ -18,7 +22,7 @@ def execute():
 	parent DocType has no remaining link to it.
 
 	Returns:
-		None
+	        None
 	"""
 	for doctype in UNUSED_DOCTYPES:
 		if frappe.db.exists("DocType", doctype):

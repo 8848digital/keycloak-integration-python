@@ -19,12 +19,12 @@ def get_client_roles(userinfo, client_id):
 	there, so roles from groups and composite roles are included.
 
 	Parameters:
-		userinfo (dict, required): The userinfo / token claims.
-		client_id (str, required): This site's Keycloak client id.
+	        userinfo (dict, required): The userinfo / token claims.
+	        client_id (str, required): This site's Keycloak client id.
 
 	Returns:
-		list[str] | None: The role names, or None when the claim is missing
-			(mapper not configured), so callers can leave roles untouched.
+	        list[str] | None: The role names, or None when the claim is missing
+	                (mapper not configured), so callers can leave roles untouched.
 	"""
 	resource_access = (userinfo or {}).get("resource_access")
 	if not isinstance(resource_access, dict):
@@ -42,11 +42,11 @@ def sync_user_role_profiles(username, keycloak_roles):
 	manually managed users keep their roles.
 
 	Parameters:
-		username (str, required): The ERPNext User name.
-		keycloak_roles (list[str], required): Client role names from Keycloak.
+	        username (str, required): The ERPNext User name.
+	        keycloak_roles (list[str], required): Client role names from Keycloak.
 
 	Returns:
-		list[str]: The Role Profiles now assigned.
+	        list[str]: The Role Profiles now assigned.
 	"""
 	role_profiles = get_role_profiles_for(keycloak_roles)
 	has_record = frappe.db.exists(USER_ROLE_PROFILES_DOCTYPE, username)
@@ -73,10 +73,10 @@ def get_role_profiles_for(keycloak_roles):
 	wins; otherwise a Role Profile with the same name is used.
 
 	Parameters:
-		keycloak_roles (list[str], required): Keycloak role names.
+	        keycloak_roles (list[str], required): Keycloak role names.
 
 	Returns:
-		list[str]: Sorted, unique Role Profile names.
+	        list[str]: Sorted, unique Role Profile names.
 	"""
 	if not keycloak_roles:
 		return []
@@ -89,8 +89,12 @@ def get_role_profiles_for(keycloak_roles):
 			as_list=True,
 		)
 	)
-	same_name = set(frappe.get_all("Role Profile", filters={"name": ["in", keycloak_roles]}, pluck="name"))
-	return sorted({mapped.get(role) or role for role in keycloak_roles if role in mapped or role in same_name})
+	same_name = set(
+		frappe.get_all("Role Profile", filters={"name": ["in", keycloak_roles]}, pluck="name")
+	)
+	return sorted(
+		{mapped.get(role) or role for role in keycloak_roles if role in mapped or role in same_name}
+	)
 
 
 def assign_collective_roles(username):
@@ -100,10 +104,10 @@ def assign_collective_roles(username):
 	changed, so logins do not rewrite the user every time.
 
 	Parameters:
-		username (str, required): The ERPNext User name.
+	        username (str, required): The ERPNext User name.
 
 	Returns:
-		None
+	        None
 	"""
 	role_profiles = frappe.get_all(
 		ROLE_PROFILES_TABLE_DOCTYPE,

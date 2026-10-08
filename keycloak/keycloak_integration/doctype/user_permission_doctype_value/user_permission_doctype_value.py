@@ -5,5 +5,6 @@
 
 from frappe.model.document import Document
 
+
 class UserPermissionDoctypeValue(Document):
 	"""Child row: one restricted value and the User Permission created for it."""

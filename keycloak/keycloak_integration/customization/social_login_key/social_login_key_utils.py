@@ -15,10 +15,10 @@ def set_missing_url(doc):
 	Admin API. Fill in whichever is missing from the other.
 
 	Parameters:
-		doc (Document, required): The Social Login Key.
+	        doc (Document, required): The Social Login Key.
 
 	Returns:
-		None
+	        None
 	"""
 	if doc.name != KEYCLOAK_PROVIDER:
 		return

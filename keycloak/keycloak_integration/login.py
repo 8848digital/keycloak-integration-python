@@ -7,7 +7,10 @@
 
 import frappe
 
-from keycloak.keycloak_integration.sync.role_claims import get_client_roles, sync_user_role_profiles
+from keycloak.keycloak_integration.sync.role_claims import (
+	get_client_roles,
+	sync_user_role_profiles,
+)
 from keycloak.utils.keycloak_admin import KEYCLOAK_PROVIDER
 
 
@@ -19,10 +22,10 @@ def sync_roles_from_keycloak(login_manager):
 	end the new session.
 
 	Parameters:
-		login_manager (LoginManager, required): The login in progress.
+	        login_manager (LoginManager, required): The login in progress.
 
 	Returns:
-		None
+	        None
 	"""
 	userinfo = frappe.flags.keycloak_userinfo
 	if not userinfo or login_manager.user in ("Administrator", "Guest"):
@@ -47,13 +50,13 @@ def validate_user_permission(login_manager):
 	session behind. Administrator and the setup wizard are always allowed.
 
 	Parameters:
-		login_manager (LoginManager, required): The login in progress.
+	        login_manager (LoginManager, required): The login in progress.
 
 	Returns:
-		None
+	        None
 
 	Raises:
-		frappe.AuthenticationError: When the user has no User Permission.
+	        frappe.AuthenticationError: When the user has no User Permission.
 	"""
 	user = login_manager.user
 	if user == "Administrator" or frappe.flags.in_setup_wizard:

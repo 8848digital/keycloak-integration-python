@@ -11,14 +11,15 @@ Configuration for docs
 # headline = "App that does everything"
 # sub_heading = "Yes, you got that right the first time, everything"
 
+
 def get_context(context):
 	"""
 	Set the brand shown on the generated docs pages.
 
 	Parameters:
-		context (frappe._dict, required): The page context.
+	        context (frappe._dict, required): The page context.
 
 	Returns:
-		None
+	        None
 	"""
 	context.brand_html = "Keycloak Integration"

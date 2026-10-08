@@ -5,5 +5,6 @@
 
 from frappe.model.document import Document
 
+
 class PermissionTypeDoctype(Document):
 	"""Child row: one DocType restriction of a Permission Type."""

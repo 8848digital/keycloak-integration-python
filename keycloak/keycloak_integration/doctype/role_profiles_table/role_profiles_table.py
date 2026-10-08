@@ -5,5 +5,6 @@
 
 from frappe.model.document import Document
 
+
 class RoleProfilesTable(Document):
 	"""Child row: one Role Profile assigned to a user."""

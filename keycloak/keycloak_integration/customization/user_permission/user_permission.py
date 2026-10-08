@@ -15,10 +15,10 @@ def on_trash(doc, method=None):
 	Block deleting a User Permission that a configuration manages.
 
 	Parameters:
-		doc (Document, required): The User Permission.
-		method (str, optional): The hook event name.
+	        doc (Document, required): The User Permission.
+	        method (str, optional): The hook event name.
 
 	Returns:
-		None
+	        None
 	"""
 	validate_not_linked_to_configuration(doc)

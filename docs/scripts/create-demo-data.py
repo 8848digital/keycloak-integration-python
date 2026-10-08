@@ -55,9 +55,13 @@ TEAMS = {
 	"Managers": ["Demo Sales Head", "Demo Finance Head"],
 }
 USERS = {
-	"team.sales1": "Sales Team", "team.sales2": "Sales Team", "team.sales3": "Sales Team",
-	"team.store1": "Stores Team", "team.store2": "Stores Team",
-	"team.fin1": "Finance Team", "team.fin2": "Finance Team",
+	"team.sales1": "Sales Team",
+	"team.sales2": "Sales Team",
+	"team.sales3": "Sales Team",
+	"team.store1": "Stores Team",
+	"team.store2": "Stores Team",
+	"team.fin1": "Finance Team",
+	"team.fin2": "Finance Team",
 	"team.manager1": "Managers",
 }
 PERMISSION_TYPE = "PT Company"
@@ -68,11 +72,13 @@ def main():
 	Create every demo object, then print what ERPNext shows for each user.
 
 	Returns:
-		None
+	        None
 	"""
 	erp = erp_session()
 	kc = keycloak_session()
-	company = ENV.get("COMPANY") or erp.get(f"{ERP_URL}/api/resource/Company").json()["data"][0]["name"]
+	company = (
+		ENV.get("COMPANY") or erp.get(f"{ERP_URL}/api/resource/Company").json()["data"][0]["name"]
+	)
 
 	create_role_profiles(erp)
 	client_uuid = kc_get(kc, "clients", params={"clientId": CLIENT_ID})[0]["id"]
@@ -95,8 +101,10 @@ def create_role_profiles(erp):
 	"""Create the demo Role Profiles; ERPNext creates the client roles."""
 	for name, roles in ROLE_PROFILES.items():
 		if not erp.get(f"{ERP_URL}/api/resource/Role Profile/{quote(name)}").ok:
-			response = erp.post(f"{ERP_URL}/api/resource/Role Profile",
-				json={"role_profile": name, "roles": [{"role": role} for role in roles]})
+			response = erp.post(
+				f"{ERP_URL}/api/resource/Role Profile",
+				json={"role_profile": name, "roles": [{"role": role} for role in roles]},
+			)
 			response.raise_for_status()
 
 
@@ -109,8 +117,10 @@ def create_teams(kc, client_uuid):
 			kc.post(f"{admin_url()}/groups", json={"name": team}).raise_for_status()
 			group = find_group(kc, team)
 		roles = [kc_get(kc, f"clients/{client_uuid}/roles/{quote(name)}") for name in role_names]
-		kc.post(f"{admin_url()}/groups/{group['id']}/role-mappings/clients/{client_uuid}",
-			json=[{"id": role["id"], "name": role["name"]} for role in roles]).raise_for_status()
+		kc.post(
+			f"{admin_url()}/groups/{group['id']}/role-mappings/clients/{client_uuid}",
+			json=[{"id": role["id"], "name": role["name"]} for role in roles],
+		).raise_for_status()
 		team_ids[team] = group["id"]
 	return team_ids
 
@@ -118,8 +128,13 @@ def create_teams(kc, client_uuid):
 def create_permission_type(erp):
 	"""Create "PT Company" (Company, apply to all DocTypes) when missing."""
 	if not erp.get(f"{ERP_URL}/api/resource/Permission Type/{quote(PERMISSION_TYPE)}").ok:
-		erp.post(f"{ERP_URL}/api/resource/Permission Type", json={"name1": PERMISSION_TYPE,
-			"permission_type_doctype": [{"allow_doctype": "Company", "apply_to_all_doctypes": 1}]}).raise_for_status()
+		erp.post(
+			f"{ERP_URL}/api/resource/Permission Type",
+			json={
+				"name1": PERMISSION_TYPE,
+				"permission_type_doctype": [{"allow_doctype": "Company", "apply_to_all_doctypes": 1}],
+			},
+		).raise_for_status()
 
 
 def create_keycloak_user(kc, username, email):
@@ -127,9 +142,18 @@ def create_keycloak_user(kc, username, email):
 	found = kc_get(kc, "users", params={"username": username, "exact": "true"})
 	if not found:
 		first, last = username.split(".", 1)
-		kc.post(f"{admin_url()}/users", json={"username": username, "email": email,
-			"firstName": first.title(), "lastName": last.title(), "enabled": True, "emailVerified": True,
-			"credentials": [{"type": "password", "value": PASSWORD, "temporary": False}]}).raise_for_status()
+		kc.post(
+			f"{admin_url()}/users",
+			json={
+				"username": username,
+				"email": email,
+				"firstName": first.title(),
+				"lastName": last.title(),
+				"enabled": True,
+				"emailVerified": True,
+				"credentials": [{"type": "password", "value": PASSWORD, "temporary": False}],
+			},
+		).raise_for_status()
 		found = kc_get(kc, "users", params={"username": username, "exact": "true"})
 	return found[0]["id"]
 
@@ -138,9 +162,14 @@ def give_access(erp, email, company):
 	"""Create the user's User and Permission Configuration when missing."""
 	name = f"{email}-{PERMISSION_TYPE}"
 	if not erp.get(f"{ERP_URL}/api/resource/User and Permission Configuration/{quote(name)}").ok:
-		erp.post(f"{ERP_URL}/api/resource/User and Permission Configuration", json={"user": email,
-			"permission_type": PERMISSION_TYPE,
-			"user_permission_doctype_value": [{"doc_type": "Company", "for_value": company}]}).raise_for_status()
+		erp.post(
+			f"{ERP_URL}/api/resource/User and Permission Configuration",
+			json={
+				"user": email,
+				"permission_type": PERMISSION_TYPE,
+				"user_permission_doctype_value": [{"doc_type": "Company", "for_value": company}],
+			},
+		).raise_for_status()
 
 
 def report(erp):
@@ -160,9 +189,16 @@ def erp_session():
 
 def keycloak_session():
 	"""Keycloak admin session (master realm, admin-cli)."""
-	response = requests.post(f"{KC_URL}/realms/master/protocol/openid-connect/token", data={
-		"grant_type": "password", "client_id": "admin-cli",
-		"username": ENV.get("KC_ADMIN_USER", "admin"), "password": ENV["KC_ADMIN_PASSWORD"]}, timeout=20)
+	response = requests.post(
+		f"{KC_URL}/realms/master/protocol/openid-connect/token",
+		data={
+			"grant_type": "password",
+			"client_id": "admin-cli",
+			"username": ENV.get("KC_ADMIN_USER", "admin"),
+			"password": ENV["KC_ADMIN_PASSWORD"],
+		},
+		timeout=20,
+	)
 	response.raise_for_status()
 	session = requests.Session()
 	session.headers["Authorization"] = f"Bearer {response.json()['access_token']}"
@@ -183,7 +219,9 @@ def kc_get(kc, path, **kwargs):
 
 def find_group(kc, name):
 	"""Return the top-level group with this exact name, or None."""
-	return next((group for group in kc_get(kc, "groups", params={"search": name}) if group["name"] == name), None)
+	return next(
+		(group for group in kc_get(kc, "groups", params={"search": name}) if group["name"] == name), None
+	)
 
 
 def wait_for(check, seconds=10):

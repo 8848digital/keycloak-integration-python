@@ -7,8 +7,9 @@
 
 from urllib.parse import quote
 
-import frappe
 import requests
+
+import frappe
 
 KEYCLOAK_PROVIDER = "keycloak"
 
@@ -22,7 +23,7 @@ def get_keycloak_settings():
 	sync is not configured or not enabled on this site.
 
 	Returns:
-		Document | None: The Social Login Key document.
+	        Document | None: The Social Login Key document.
 	"""
 	if not frappe.db.exists("Social Login Key", KEYCLOAK_PROVIDER):
 		return None
@@ -39,10 +40,10 @@ def get_keycloak_access_token():
 	Fetch a service-account access token with the client-credentials grant.
 
 	Returns:
-		str | None: The bearer token, or None when Keycloak is not enabled.
+	        str | None: The bearer token, or None when Keycloak is not enabled.
 
 	Raises:
-		requests.HTTPError: When Keycloak rejects the client credentials.
+	        requests.HTTPError: When Keycloak rejects the client credentials.
 	"""
 	settings = get_keycloak_settings()
 	if not settings:
@@ -67,10 +68,10 @@ def get_admin_realm_url(settings=None):
 	Build the Admin REST API base URL for the configured realm.
 
 	Parameters:
-		settings (Document, optional): The Social Login Key. Loaded when omitted.
+	        settings (Document, optional): The Social Login Key. Loaded when omitted.
 
 	Returns:
-		str: For example "https://sso.example.com/admin/realms/erp".
+	        str: For example "https://sso.example.com/admin/realms/erp".
 	"""
 	settings = settings or frappe.get_cached_doc("Social Login Key", KEYCLOAK_PROVIDER)
 	if settings.get("root_url") and settings.get("realm_name"):
@@ -85,13 +86,13 @@ def admin_request(method, path, access_token, **kwargs):
 	Call one Admin REST API endpoint of the configured realm.
 
 	Parameters:
-		method (str, required): HTTP method, for example "POST".
-		path (str, required): Path below the realm, for example "roles".
-		access_token (str, required): Bearer token from get_keycloak_access_token.
-		**kwargs: Passed to requests.request (json, params, ...).
+	        method (str, required): HTTP method, for example "POST".
+	        path (str, required): Path below the realm, for example "roles".
+	        access_token (str, required): Bearer token from get_keycloak_access_token.
+	        **kwargs: Passed to requests.request (json, params, ...).
 
 	Returns:
-		requests.Response: The raw response; callers check the status code.
+	        requests.Response: The raw response; callers check the status code.
 	"""
 	return requests.request(
 		method,
@@ -109,14 +110,14 @@ def get_site_client_uuid(access_token, settings=None):
 	so every ERPNext site has its own set of roles in one realm.
 
 	Parameters:
-		access_token (str, required): Bearer token from get_keycloak_access_token.
-		settings (Document, optional): The Social Login Key. Loaded when omitted.
+	        access_token (str, required): Bearer token from get_keycloak_access_token.
+	        settings (Document, optional): The Social Login Key. Loaded when omitted.
 
 	Returns:
-		str: The client's internal id (UUID).
+	        str: The client's internal id (UUID).
 
 	Raises:
-		frappe.ValidationError: When Keycloak has no such client.
+	        frappe.ValidationError: When Keycloak has no such client.
 	"""
 	settings = settings or frappe.get_cached_doc("Social Login Key", KEYCLOAK_PROVIDER)
 	response = admin_request("GET", "clients", access_token, params={"clientId": settings.client_id})
@@ -133,10 +134,10 @@ def join_url(*parts):
 	Join URL parts with exactly one slash between them.
 
 	Parameters:
-		*parts (str): URL fragments, for example ("https://kc/", "/realms").
+	        *parts (str): URL fragments, for example ("https://kc/", "/realms").
 
 	Returns:
-		str: The joined URL, for example "https://kc/realms".
+	        str: The joined URL, for example "https://kc/realms".
 	"""
 	cleaned = [str(part).strip("/") for part in parts if part]
 	return "/".join(cleaned)
@@ -147,9 +148,9 @@ def quote_path(segment):
 	Percent-encode one URL path segment, including "/".
 
 	Parameters:
-		segment (str, required): A role name, session id, etc.
+	        segment (str, required): A role name, session id, etc.
 
 	Returns:
-		str: The encoded segment.
+	        str: The encoded segment.
 	"""
 	return quote(str(segment), safe="")

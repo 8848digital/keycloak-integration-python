@@ -18,13 +18,13 @@ def handle_event(payload):
 	Route one pushed Keycloak change to its handler.
 
 	Parameters:
-		payload (dict, required): "operation" is upsert_user, disable_user or
-			logout_user; "user" is the Keycloak user ({id, username, email,
-			firstName, lastName, enabled}); "roles" (optional) are the user's
-			client roles for this site.
+	        payload (dict, required): "operation" is upsert_user, disable_user or
+	                logout_user; "user" is the Keycloak user ({id, username, email,
+	                firstName, lastName, enabled}); "roles" (optional) are the user's
+	                client roles for this site.
 
 	Returns:
-		dict: {"user": <ERPNext user name or None>, "operation": <operation>}
+	        dict: {"user": <ERPNext user name or None>, "operation": <operation>}
 	"""
 	handlers = {"upsert_user": upsert_user, "disable_user": disable_user, "logout_user": logout_user}
 	operation = payload.get("operation")
@@ -43,11 +43,11 @@ def upsert_user(keycloak_user, payload):
 	user is disabled here too and loses open sessions.
 
 	Parameters:
-		keycloak_user (dict, required): The Keycloak user.
-		payload (dict, required): The event; may hold "roles".
+	        keycloak_user (dict, required): The Keycloak user.
+	        payload (dict, required): The event; may hold "roles".
 
 	Returns:
-		str: The ERPNext user name.
+	        str: The ERPNext user name.
 	"""
 	username = find_user(keycloak_user)
 	email = keycloak_user.get("email")
@@ -59,7 +59,9 @@ def upsert_user(keycloak_user, payload):
 		user.email = email
 		user.send_welcome_email = 0
 
-	user.first_name = keycloak_user.get("firstName") or user.first_name or keycloak_user.get("username") or email
+	user.first_name = (
+		keycloak_user.get("firstName") or user.first_name or keycloak_user.get("username") or email
+	)
 	user.last_name = keycloak_user.get("lastName") or None
 	user.enabled = 1 if keycloak_user.get("enabled", True) else 0
 	if not user.get_social_login_userid(KEYCLOAK_PROVIDER):
@@ -83,11 +85,11 @@ def disable_user(keycloak_user, payload=None):
 	The user record and its history are kept.
 
 	Parameters:
-		keycloak_user (dict, required): The Keycloak user (at least "id").
-		payload (dict, optional): The event; unused.
+	        keycloak_user (dict, required): The Keycloak user (at least "id").
+	        payload (dict, optional): The event; unused.
 
 	Returns:
-		str | None: The ERPNext user name, or None when unknown.
+	        str | None: The ERPNext user name, or None when unknown.
 	"""
 	username = find_user(keycloak_user)
 	if not username:
@@ -103,11 +105,11 @@ def logout_user(keycloak_user, payload=None):
 	End all ERPNext sessions of the user (Keycloak single logout).
 
 	Parameters:
-		keycloak_user (dict, required): The Keycloak user (at least "id").
-		payload (dict, optional): The event; unused.
+	        keycloak_user (dict, required): The Keycloak user (at least "id").
+	        payload (dict, optional): The event; unused.
 
 	Returns:
-		str | None: The ERPNext user name, or None when unknown.
+	        str | None: The ERPNext user name, or None when unknown.
 	"""
 	username = find_user(keycloak_user)
 	if username:
@@ -122,10 +124,10 @@ def find_user(keycloak_user):
 	login link (Keycloak id), then by e-mail.
 
 	Parameters:
-		keycloak_user (dict, required): {id, email, ...}.
+	        keycloak_user (dict, required): {id, email, ...}.
 
 	Returns:
-		str | None: The User name.
+	        str | None: The User name.
 	"""
 	keycloak_id = keycloak_user.get("id")
 	if keycloak_id:
@@ -144,10 +146,10 @@ def __parse_user(payload):
 	Return the "user" object of the event, parsed when sent as text.
 
 	Parameters:
-		payload (dict, required): The event.
+	        payload (dict, required): The event.
 
 	Returns:
-		dict: The Keycloak user.
+	        dict: The Keycloak user.
 	"""
 	keycloak_user = payload.get("user")
 	if isinstance(keycloak_user, str):

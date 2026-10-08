@@ -23,13 +23,17 @@ class TestSocialLoginKeyUrls(FrappeTestCase):
 
 	def test_base_url_from_root_and_realm(self):
 		"""root_url + realm_name -> base_url."""
-		doc = SimpleNamespace(name="keycloak", base_url=None, root_url="http://kc:8080/", realm_name="erp")
+		doc = SimpleNamespace(
+			name="keycloak", base_url=None, root_url="http://kc:8080/", realm_name="erp"
+		)
 		set_missing_url(doc)
 		self.assertEqual(doc.base_url, "http://kc:8080/realms/erp")
 
 	def test_root_and_realm_from_base_url(self):
 		"""base_url -> root_url + realm_name."""
-		doc = SimpleNamespace(name="keycloak", base_url="http://kc:8080/realms/erp/", root_url=None, realm_name=None)
+		doc = SimpleNamespace(
+			name="keycloak", base_url="http://kc:8080/realms/erp/", root_url=None, realm_name=None
+		)
 		set_missing_url(doc)
 		self.assertEqual(doc.root_url, "http://kc:8080/")
 		self.assertEqual(doc.realm_name, "erp")
@@ -58,14 +62,18 @@ class TestRoleProfileHooks(FrappeTestCase):
 		self.assertEqual((method, path, token), ("POST", "clients/client-uuid/roles", "token"))
 		self.assertEqual(admin_request.call_args_list[0].kwargs["json"]["name"], "KC Hook Profile")
 		mapping = frappe.get_doc("Erpnext Keycloak Role Profile Mapping", "KC Hook Profile")
-		self.assertEqual((mapping.role_profile_id, mapping.keycloak_realm_role_name), ("role-uuid", "KC Hook Profile"))
+		self.assertEqual(
+			(mapping.role_profile_id, mapping.keycloak_realm_role_name), ("role-uuid", "KC Hook Profile")
+		)
 
 	def test_keycloak_rejection_blocks_save(self):
 		"""If Keycloak refuses the role, the Role Profile is not created."""
 		with (
 			patch.object(role_profile_utils, "get_keycloak_access_token", return_value="token"),
 			patch.object(role_profile_utils, "get_site_client_uuid", return_value="client-uuid"),
-			patch.object(role_profile_utils, "admin_request", return_value=FakeResponse(403, text="forbidden")),
+			patch.object(
+				role_profile_utils, "admin_request", return_value=FakeResponse(403, text="forbidden")
+			),
 			self.assertRaises(frappe.ValidationError),
 		):
 			make_role_profile("KC Rejected Profile", ["Sales User"])
@@ -87,7 +95,9 @@ class TestRoleProfileHooks(FrappeTestCase):
 		with (
 			patch.object(role_profile_utils, "get_keycloak_access_token", return_value="token"),
 			patch.object(role_profile_utils, "get_site_client_uuid", return_value="client-uuid"),
-			patch.object(role_profile_utils, "admin_request", return_value=FakeResponse(204)) as admin_request,
+			patch.object(
+				role_profile_utils, "admin_request", return_value=FakeResponse(204)
+			) as admin_request,
 		):
 			frappe.delete_doc("Role Profile", "KC Delete Profile", ignore_permissions=True)
 

@@ -25,11 +25,11 @@ def remember_sso_session(provider, session_state):
 	It is kept server side (not in a cookie), so a client cannot change it.
 
 	Parameters:
-		provider (str, required): The Social Login Key name.
-		session_state (str, required): The provider's session id.
+	        provider (str, required): The Social Login Key name.
+	        session_state (str, required): The provider's session id.
 
 	Returns:
-		None
+	        None
 	"""
 	sid = frappe.session.sid
 	if not sid or frappe.session.user == "Guest":
@@ -48,10 +48,10 @@ def logout(login_manager=None):
 	session was opened through Keycloak.
 
 	Parameters:
-		login_manager (LoginManager, optional): Passed by Frappe; unused.
+	        login_manager (LoginManager, optional): Passed by Frappe; unused.
 
 	Returns:
-		None
+	        None
 	"""
 	sid = frappe.session.sid
 	sso_session = frappe.cache.get_value(__cache_key(sid)) if sid else None
@@ -68,11 +68,11 @@ def delete_keycloak_session(session_state, notify=True):
 	are logged (and reported when notify is set), but never block the caller.
 
 	Parameters:
-		session_state (str, required): The Keycloak session id.
-		notify (bool, optional): Show a message to the user. Default True.
+	        session_state (str, required): The Keycloak session id.
+	        notify (bool, optional): Show a message to the user. Default True.
 
 	Returns:
-		bool: True when Keycloak confirmed the deletion.
+	        bool: True when Keycloak confirmed the deletion.
 	"""
 	provider_name = frappe.db.get_value("Social Login Key", KEYCLOAK_PROVIDER, "provider_name")
 	try:
@@ -100,11 +100,11 @@ def __notify(enabled, message):
 	Show a message to the user when enabled.
 
 	Parameters:
-		enabled (bool, required): Whether to show it.
-		message (str, required): The translated message.
+	        enabled (bool, required): Whether to show it.
+	        message (str, required): The translated message.
 
 	Returns:
-		None
+	        None
 	"""
 	if enabled:
 		frappe.msgprint(message)
@@ -115,9 +115,9 @@ def __cache_key(sid):
 	Build the cache key for a Frappe session id.
 
 	Parameters:
-		sid (str, required): The Frappe session id.
+	        sid (str, required): The Frappe session id.
 
 	Returns:
-		str: The cache key.
+	        str: The cache key.
 	"""
 	return f"keycloak_sso_session:{sid}"

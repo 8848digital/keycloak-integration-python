@@ -9,7 +9,13 @@ import frappe
 from frappe import _
 
 # Fields that together define one Permission Type row.
-ROW_FIELDS = ("allow_doctype", "apply_to_all_doctypes", "applicable_for", "hide_descendants", "is_default")
+ROW_FIELDS = (
+	"allow_doctype",
+	"apply_to_all_doctypes",
+	"applicable_for",
+	"hide_descendants",
+	"is_default",
+)
 
 
 def validate_unique_doctypes(doc):
@@ -17,10 +23,10 @@ def validate_unique_doctypes(doc):
 	Allow each DocType only once per Permission Type.
 
 	Parameters:
-		doc (Document, required): The Permission Type.
+	        doc (Document, required): The Permission Type.
 
 	Returns:
-		None
+	        None
 	"""
 	seen = set()
 	for row in doc.permission_type_doctype:
@@ -37,16 +43,14 @@ def validate_row_options(doc):
 	Doctypes" off, and "Hide Descendants" only works for tree DocTypes.
 
 	Parameters:
-		doc (Document, required): The Permission Type.
+	        doc (Document, required): The Permission Type.
 
 	Returns:
-		None
+	        None
 	"""
 	for row in doc.permission_type_doctype:
 		if row.applicable_for and row.apply_to_all_doctypes:
-			frappe.throw(
-				_("Row {0}: uncheck Apply To All Doctypes to set Applicable For").format(row.idx)
-			)
+			frappe.throw(_("Row {0}: uncheck Apply To All Doctypes to set Applicable For").format(row.idx))
 
 		if row.hide_descendants and not frappe.get_meta(row.allow_doctype).is_nested_set():
 			frappe.throw(
@@ -62,10 +66,10 @@ def validate_doctype_links(doc):
 	Configuration still uses it.
 
 	Parameters:
-		doc (Document, required): The Permission Type.
+	        doc (Document, required): The Permission Type.
 
 	Returns:
-		None
+	        None
 	"""
 	previous_rows = frappe.get_all(
 		"Permission Type Doctype", filters={"parent": doc.name}, fields=list(ROW_FIELDS)
@@ -88,11 +92,11 @@ def get_linked_configurations(permission_type, row):
 	Find the configurations that use one Permission Type row.
 
 	Parameters:
-		permission_type (str, required): The Permission Type name.
-		row (dict, required): The row values (see ROW_FIELDS).
+	        permission_type (str, required): The Permission Type name.
+	        row (dict, required): The row values (see ROW_FIELDS).
 
 	Returns:
-		list[str]: Names of linked User and Permission Configurations.
+	        list[str]: Names of linked User and Permission Configurations.
 	"""
 	configuration = frappe.qb.DocType("User and Permission Configuration")
 	value = frappe.qb.DocType("User Permission Doctype Value")
@@ -115,10 +119,10 @@ def is_dict_match(previous_row, current_row):
 	Check that every value of a saved row is unchanged in the current row.
 
 	Parameters:
-		previous_row (dict, required): The saved row values.
-		current_row (Document | dict, required): The row being saved.
+	        previous_row (dict, required): The saved row values.
+	        current_row (Document | dict, required): The row being saved.
 
 	Returns:
-		bool: True when all values match.
+	        bool: True when all values match.
 	"""
 	return all(current_row.get(key) == value for key, value in previous_row.items())

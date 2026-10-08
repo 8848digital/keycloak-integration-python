@@ -22,10 +22,10 @@ def get_access_token(payload):
 	the same message, so the endpoint does not reveal which users exist.
 
 	Parameters:
-		payload (dict, required): Needs "usr" and "pwd".
+	        payload (dict, required): Needs "usr" and "pwd".
 
 	Returns:
-		dict: success_response with {"access_token"} or error_response.
+	        dict: success_response with {"access_token"} or error_response.
 	"""
 	usr, pwd = payload.get("usr"), payload.get("pwd")
 	if not usr or not pwd:

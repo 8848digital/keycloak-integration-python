@@ -19,13 +19,13 @@ def validate_not_linked_to_configuration(doc):
 	the configuration itself is removing it (flags.upc_delete_request).
 
 	Parameters:
-		doc (Document, required): The User Permission being deleted.
+	        doc (Document, required): The User Permission being deleted.
 
 	Returns:
-		None
+	        None
 
 	Raises:
-		frappe.ValidationError: When a configuration still links to it.
+	        frappe.ValidationError: When a configuration still links to it.
 	"""
 	if doc.flags.upc_delete_request:
 		return
