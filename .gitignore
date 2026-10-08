@@ -4,4 +4,5 @@
 *.swp
 tags
 keycloak/docs/current
-node_modules/
+node_modules
+.codegraph/

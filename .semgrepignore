@@ -1,0 +1,5 @@
+# Repo tooling and agent files, never run on a site.
+.claude/
+scripts/
+# Verbatim template from the 8848 skills repo (overwritten by scripts/sync_skills.sh).
+keycloak/commands/export_fixtures.py
